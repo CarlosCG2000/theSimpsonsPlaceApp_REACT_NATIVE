@@ -1,11 +1,10 @@
 import { Platform } from 'react-native';
 import { readFileAssets } from 'react-native-fs'; // requiere instalación: ver nota abajo
 import { Logger } from '../../../utils/Logger'; // asumiendo que tienes un logger propio
-import episodesData from '../../../utils/assets/episodios_data.json';
+import episodesData from '../../../utils/assets/episodios_data.json'; // Importa el JSON directamente si es estático
+import episodesDataTest from '../../../utils/assets/episodios_test.json'; // Para pruebas, si es necesario
 import { JSON_EPISODES } from '../../../utils/Constant';
-import { Episode } from '../../../domain/model/Episode';
 import { EpisodeDTO, EpisodeJsonResponse } from '../../model/EpisodeJsonResponse';
-import { toEpisode } from '../../../domain/mapper/toEpisode';
 
 const logger = new Logger('EpisodeDatasource');
 
@@ -24,24 +23,26 @@ export class EpisodeDatasource {
     }
 
     // V1: el JSON no cambia y no necesito leerlo dinámicamente, se puede importarlo directamente:
-    async getEpisodes(): Promise<Episode[]> {
-        if (!episodesData) {
-            logger.error('No se ha encontrado el archivo episodes_data.json');
-            throw new Error('No se ha encontrado el archivo episodes_data.json');
+    async getEpisodes(): Promise<EpisodeDTO[]> {
+        if (!episodesData || !episodesDataTest) {
+            logger.error('No se ha encontrado el archivo episodios_data.json o episodios_test.json');
+            throw new Error('No se ha encontrado el archivo episodios_data.json o episodios_test.json');
         }
 
         try {
-            const parsed: EpisodeJsonResponse = episodesData;
+            let parsed: EpisodeJsonResponse;
+
+            // if(__DEV__) { parsed = episodesDataTest; }
+            // else { parsed = episodesData; }
+
+            parsed = episodesData;
 
             if (!parsed.episodes || !Array.isArray(parsed.episodes)) {
                 logger.warn('El archivo no contiene el campo "episodes"');
                 return [];
             }
 
-            // Mapeamos los DTO a la entidad Episode, lo iba a meter en el domain pero por simplicidad lo hacemos aquí
-            const episodes = (parsed.episodes).map(toEpisode);
-
-            return episodes;
+            return parsed.episodes; // Retornamos el array de DTOs
         } catch (e) {
             logger.error(`Error al cargar el archivo ${JSON_EPISODES}: ` + e);
             throw new Error(`No se ha podido cargar el archivo ${JSON_EPISODES}`);
@@ -49,7 +50,7 @@ export class EpisodeDatasource {
     }
 
     // V2: Método para obtener el JSON de episodios de forma dinámica
-    async getEpisodesV2(): Promise<Episode[]> {
+    async getEpisodesV2(): Promise<EpisodeDTO[]> {
         try {
             const filePath = this.path;
             logger.info(`Intentando cargar el archivo: ${filePath}`);
@@ -64,8 +65,7 @@ export class EpisodeDatasource {
                 return [];
             }
 
-            const episodes = (parsed.episodes as EpisodeDTO[]).map(toEpisode);
-            return episodes;
+            return parsed.episodes;
         } catch (e) {
             logger.warn(`Falló al cargar el JSON: ${JSON_EPISODES}`);
             throw new Error(`No se ha encontrado el archivo ${JSON_EPISODES}`);

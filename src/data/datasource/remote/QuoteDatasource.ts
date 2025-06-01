@@ -1,16 +1,12 @@
-
-
-import { Quote } from '../../../domain/model/Quote';
 import { API_QUOTES, API_QUOTES_PATH } from '../../../utils/Constant';
 import { Logger } from '../../../utils/Logger';
-import { QuoteApiResponse } from '../../model/QuoteApiResponse';
+import { QuoteApiResponse, QuoteDTO } from '../../model/QuoteApiResponse';
 import quoteData from '../../../utils/assets/citas_test.json';
-import { toQuote } from '../../../domain/mapper/toQuote';
 
 const logger = new Logger('QuoteDatasource');
 
 export class QuoteDatasource {
-    async getQuotes(numElementos: number = 10, textPersonaje: string = ''): Promise<Quote[]> {
+    async getQuotes(numElementos: number = 10, textPersonaje: string = ''): Promise<QuoteDTO[]> {
 
         const url = `${API_QUOTES}${API_QUOTES_PATH}?count=${numElementos}&character=${encodeURIComponent(textPersonaje)}`;
 
@@ -36,9 +32,7 @@ export class QuoteDatasource {
             const data: QuoteApiResponse = await response.json();
             logger.info(`Citas cargadas con éxito (${data.length})`);
 
-            // Mapeamos los DTO a la entidad Quote, lo iba a meter en el domain pero por simplicidad lo hacemos aquí
-            const citas: Quote[] = data.map(toQuote);
-            return citas;
+            return data;
 
         } catch (error: any) {
             logger.error(`💥 Error en la petición: ${error.message}`);
@@ -47,7 +41,7 @@ export class QuoteDatasource {
     }
 
     // Para tester con json local simulando la API en lugar de la API real
-    async getQuotesTest(): Promise<Quote[]> {
+    async getQuotesTest(): Promise<QuoteDTO[]> {
         if (!quoteData) {
             logger.error('No se ha encontrado el archivo citas_test.json');
             throw new Error('No se ha encontrado el archivo citas_test.json');
@@ -56,9 +50,6 @@ export class QuoteDatasource {
         const data: QuoteApiResponse = quoteData;
         logger.info(`Citas cargadas con éxito (${data.length})`);
 
-        // Mapeamos los DTO a la entidad Quote, lo iba a meter en el domain pero por simplicidad lo hacemos aquí
-        const citas: Quote[] = data.map(toQuote);
-
-        return citas;
+        return data;
     }
 }
