@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Button, Animated } from 'react-native';
 import { Quote } from '../../domain/model/Quote';
 import { QuoteRepository } from '../../domain/repository/QuoteRepository';
 import { Logger } from '../../utils/Logger';
@@ -36,23 +36,28 @@ export default class QuoteList extends React.Component<QuoteListProps, QuoteList
     }
 
     render() {
-      return (
+      return (  // boton para generar un nuevo conjunto de citas
           <View style={styles.container}>
               <Text style={styles.title}>Quote List</Text>
+                <Button
+                  title="Generar New Quotes"
+                  onPress={this.onSubmit}
+                  color="#841584"
+                />
               {this.state.loading ? (
               <Text>Loading...</Text>
               ) : (
-              this.state.quotes.map((quote, index) => (
-                  <View key={index} style={styles.quoteItem}>
-                  <Text style={styles.quoteTitle}>{quote.personaje}</Text>
-                  <Text style={styles.quoteDetails}>
-                      Quote: {quote.cita}
-                  </Text>
-                  <Text style={styles.quoteDetails}>
-                      Image: {quote.imagen}
-                  </Text>
-                  </View>
-              ))
+                <Animated.FlatList
+                      data={ this.state.quotes } // Usamos el estado para obtener la lista de episodios
+                      keyExtractor={( quote: Quote ) => quote.cita } // Usamos el id de la película como clave
+                      renderItem={({ item }) => (
+                        <View style={styles.quoteItem}>
+                          <Text style={styles.quoteTitle}>{item.personaje}</Text>
+                          <Text style={styles.quoteDetails}>Quote: {item.cita}</Text>
+                          <Text style={styles.quoteDetails}>Image: {item.imagen}</Text>
+                        </View>
+                      )}
+                  />
               )}
           </View>
       );

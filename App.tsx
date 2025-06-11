@@ -7,28 +7,35 @@
 
 import React from 'react';
 
-import {
-  SafeAreaView,
-  StyleSheet,
-} from 'react-native';
-import EpisodeList from './src/presentation/episode/EpisodeList';
-// import QuoteList from './src/presentation/QuoteList';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { NavigationContainer } from '@react-navigation/native';
+import MenuScreen from './src/presentation/MenuScreen';
+import { EpisodeTabs } from './src/presentation/episode/EpisodeTabs';
+import { QuoteTabs } from './src/presentation/quote/QuoteTabs';
 
-function App(): React.JSX.Element {
+const Stack = createNativeStackNavigator(); // Creamos el stack de navegación
 
-  return (
-    <SafeAreaView style = {styles.container}>
-      <EpisodeList />
-      {/* <QuoteList /> */}
-    </SafeAreaView>
-  );
+function RootStack(): React.JSX.Element {
+    return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="MenuScreen" component={MenuScreen} />
+      {/* <Stack.Screen name="EpisodeTabs" component={EpisodeTabs} /> */}
+      <Stack.Screen name="EpisodeTabs">
+              {({ navigation }) => <EpisodeTabs navigation={navigation} />}
+      </Stack.Screen>
+      <Stack.Screen name="QuoteTabs">
+              {({ navigation }) => <QuoteTabs navigation={navigation} />}
+      </Stack.Screen>
+    </Stack.Navigator>
+    );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#09184D',
-  },
-});
+function App(): React.JSX.Element {
+  return (
+    <NavigationContainer>
+      <RootStack />
+    </NavigationContainer>
+    );
+}
 
 export default App;

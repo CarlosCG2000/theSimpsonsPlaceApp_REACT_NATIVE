@@ -8,7 +8,7 @@ import EpisodeItem from './EpisodeItem';
 
 // Propiedades del componente EpisodeList, de momento no necesitamos pasarle nada
 interface EpisodeListProps {
-  // readonly navigation: any
+    readonly navigation: any
   // readonly searchFilter?: string; // Campos del filtro de búsqueda, filtro de búsqueda opcional
 }
 
@@ -59,6 +59,7 @@ export default /* abstract */ class EpisodeList extends React.Component<EpisodeL
         } else {
             return (
                 <Animated.FlatList
+                    style={styles.flatList} // Ocupa todo el espacio disponible
                     data={ episodes } // Usamos el estado para obtener la lista de episodios
                     keyExtractor={( item: Episode ) => item.id } // Usamos el id de la película como clave
                     renderItem={ this.renderItem } // Renderizamos cada item con el método renderItem
@@ -103,9 +104,10 @@ export default /* abstract */ class EpisodeList extends React.Component<EpisodeL
             <EpisodeItem
                 episode={item}
                 index={index} // Pasamos el índice del item para animaciones
-                onPress={() =>
-                    // this.props.navigation.navigate('MovieDetails', { movie: item })
-                    logger.info(`Episodio seleccionado: ${item.titulo} - Temporada: ${item.temporada} - Episodio: ${item.episodio}`)
+                onPress={() => {
+                        this.props.navigation.navigate('EpisodeDetails', { episode: item });
+                        logger.info(`Episodio seleccionado: ${item.titulo} - Temporada: ${item.temporada} - Episodio: ${item.episodio}`);
+                    }
                 }
             />
         );
@@ -135,6 +137,10 @@ export default /* abstract */ class EpisodeList extends React.Component<EpisodeL
 }
 
 const styles = StyleSheet.create({
+    flatList: {
+        flex: 1,
+        backgroundColor: '#09184D',
+    },
     containerLoading: {
         flex: 1,                  // Ocupa toda la pantalla
         justifyContent: 'center', // Centrado vertical

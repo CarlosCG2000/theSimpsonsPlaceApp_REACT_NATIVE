@@ -12,7 +12,7 @@ interface EpisodeRowProps {
 
 export default function EpisodeItem(props: EpisodeRowProps) { // en forma de función
 
-    const { episode, index, onPress } = props;
+    const { episode,index, onPress } = props;
 
     const opacity = useRef(new Animated.Value(0)).current; // Inicializa la opacidad en 0 (es decir transparente)
 
@@ -29,7 +29,7 @@ export default function EpisodeItem(props: EpisodeRowProps) { // en forma de fun
 
     return (
             <Animated.View style={[styles.container_item, { opacity }]}>
-                <TouchableHighlight onPress={onPress} underlayColor="#685A9C" style={styles.touchable}>
+                <TouchableHighlight onPress={onPress} underlayColor="#639BFF" style={styles.touchable}>
                     <View style={styles.container_info}>
                             <Text style={styles.title}>{episode.episodio} - {episode.titulo}</Text>
                         <View style={styles.rowBetween}>
