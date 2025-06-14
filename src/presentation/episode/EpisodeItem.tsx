@@ -28,7 +28,7 @@ export default function EpisodeItem(props: EpisodeRowProps) { // en forma de fun
 
     return (
             <Animated.View style={[styles.container_item, { opacity }]}>
-                <TouchableHighlight onPress={onPress} underlayColor="#639BFF" style={styles.touchable}>
+                <TouchableHighlight onPress={onPress} underlayColor="rgba(74, 61, 61, 0.3)" style={styles.touchable}>
                     <View style={styles.container_info}>
                             <Text style={styles.title}> {episode.titulo}</Text>
                         <View style={styles.rowBetween}>
