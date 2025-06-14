@@ -31,4 +31,6 @@ export const EyeTabBarIcon = ({ color, size }: { color: string; size: number }) 
     <Icon name="eye" size={size} color={color} />
 );
 
-
+export const ToggleIcon = () => (
+    <Ionicon name= "clipboard-outline" size={58} color="#FFD100" />
+);

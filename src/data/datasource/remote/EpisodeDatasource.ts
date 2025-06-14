@@ -71,4 +71,19 @@ export class EpisodeDatasource {
             throw new Error(`No se ha encontrado el archivo ${JSON_EPISODES}`);
         }
     }
+
+    // Método para filtrar los episodios por nombre
+    async getEpisodesByName(name: string): Promise<EpisodeDTO[]> {
+        logger.info(`Filtrando episodios por nombre: ${name}`);
+
+        const episodes = await this.getEpisodes(); // Obtenemos todos los episodios
+
+        // Filtramos los episodios que contengan el nombre en el título
+        const filteredEpisodes = episodes.filter(episode =>
+            episode.title?.toLowerCase().includes(name.toLowerCase())
+        );
+
+        logger.info(`Episodios filtrados por nombre "${name}": ${filteredEpisodes.length}`);
+        return filteredEpisodes;
+    }
 }
