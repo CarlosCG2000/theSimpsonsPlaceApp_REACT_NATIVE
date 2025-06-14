@@ -1,7 +1,7 @@
 // en ingles
 export default {
     episodes: 'Episodes',
-    quotes: 'Famous quotes',
+    quotes: 'Famous quotes and game',
     quiz: 'Quiz Game',
     allEpisodes: 'All Episodes',
     filterEpisodes: 'Filtered Episodes',

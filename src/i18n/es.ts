@@ -1,6 +1,6 @@
 export default {
     episodes: 'Episodios',
-    quotes: 'Citas célebres',
+    quotes: 'Citas célebres y juego',
     quiz: 'Juego de preguntas',
     allEpisodes: 'Todos los episodios',
     filterEpisodes: 'Episodios filtrados',

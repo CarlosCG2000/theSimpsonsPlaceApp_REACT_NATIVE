@@ -25,10 +25,6 @@ export default function MenuScreen({ navigation }: { navigation: any }) {
                 <Pressable style={styles.button} onPress={() => navigation.navigate('QuoteTabs', { screen: 'AllQuoteStack' })}>
                     <Text style={styles.buttonText}>{ i18n('quotes') }</Text>
                 </Pressable>
-
-                <Pressable style={styles.button} onPress={() => navigation.navigate('QuoteTabs', { screen: 'AllQuoteStack' })}>
-                    <Text style={styles.buttonText}>{ i18n('quiz') }</Text>
-                </Pressable>
             </View>
         </View>
     );
@@ -56,16 +52,16 @@ const styles = StyleSheet.create({
         gap: 20,
     },
     button: {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        backgroundColor: '#4E5D9C', // 'rgba(255, 255, 255, 0.1)',
         borderRadius: 20,
         paddingVertical: 16,
         paddingHorizontal: 20,
         alignItems: 'center',
         borderWidth: 2,
-        borderColor: '#FFD100', // Amarillo Simpsons
+        borderColor: '#FFC107', // Amarillo Simpsons
     },
     buttonText: {
-        color: '#FFD100',
+        color: '#FFC107',
         fontSize: 18,
         fontWeight: 'bold',
     },

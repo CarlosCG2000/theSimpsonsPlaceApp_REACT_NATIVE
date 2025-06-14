@@ -7,6 +7,7 @@ import { Logger } from '../../utils/Logger';
 import i18n from '../../i18n/i18n';
 import { AppDatabase } from '../../../App';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import { CreditsList } from './CreditsList';
 
 interface EpisodeDetailsProps {
     readonly navigation: any; // Propiedades de navegación
@@ -30,6 +31,7 @@ const logger = new Logger('EpisodeDetails'); // Instancia del logger para regist
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms)); // Función para simular una espera
 
 export default class EpisodeDetails extends React.Component<EpisodeDetailsProps, EpisodeDetailsState> {
+
     private episodeRepository: any; // Repositorio de episodios, se debe inicializar en el constructor (modificar a visto o no visto el episodio)
 
     private posterOpacity: Animated.Value = new Animated.Value(0); // Valor animado para la opacidad del poster
@@ -137,21 +139,8 @@ export default class EpisodeDetails extends React.Component<EpisodeDetailsProps,
         }
     };
 
-        public render() {
+    public render() {
         const { episodeDetails, loading, error, isViewed } = this.state;
-
-        // Renderiza el botón de ojo dinámicamente en el header
-        // this.props.navigation.setOptions({
-        //     headerRight: () => (
-        //         <TouchableOpacity onPress={this.toggleViewedStatus} style={styles.eyeIconContainer}>
-        //             <Ionicons
-        //                 name={isViewed ? 'eye' : 'eye-off'} // 'eye' si visto, 'eye-slash' si no visto
-        //                 size={24}
-        //                 color={isViewed ? 'orange' : 'gray'} // Color diferente para indicar estado
-        //             />
-        //         </TouchableOpacity>
-        //     ),
-        // });
 
         return (
             loading ? (
@@ -164,164 +153,167 @@ export default class EpisodeDetails extends React.Component<EpisodeDetailsProps,
                     <Text style={styles.errorText}>{error}</Text>
                 </View>
             ) :
-                <Animated.ScrollView contentContainerStyle={styles.container}
-                    onScroll={this.state.initialAnimated
-                        ? undefined
-                        : Animated.event(
-                            [{ nativeEvent: { contentOffset: { y: this.scrollY } } }],
-                            { useNativeDriver: true }
-                        )}
-                >
-                    <View style={styles.detailsContainer}>
+                <Animated.ScrollView style={[styles.scrollView]}>
+                    <View style={styles.container}>
+                        {/* --- CABECERA --- */}
+                        <View style={styles.headerContainer}>
                         <Text style={styles.titleText}>{episodeDetails?.titulo}</Text>
-                        <Text style={styles.overviewText}>
-                            {episodeDetails?.descripcion}
-                        </Text>
-                        <Text>Directores: {episodeDetails?.directores?.join(', ') || 'N/A'}</Text>
-                        <Text>Escritores: {episodeDetails?.escritores?.join(', ') || 'N/A'}</Text>
-                        <Text>Invitados: {episodeDetails?.invitados?.join(', ') || 'N/A'}</Text>
-
+                        <Text style={styles.overviewText}>{episodeDetails?.descripcion}</Text>
                         <Text style={styles.releaseDateText}>
                             Fecha de lanzamiento: {episodeDetails?.lanzamiento}
                         </Text>
-                        <Text style={styles.ratingText}>
-                            Calificación: {episodeDetails?.valoracion ? 'Sí' : 'No'}
-                        </Text>
-                        <TouchableOpacity onPress={this.toggleViewedStatus} style={styles.eyeIconContainer}>
+                        </View>
+
+                        {/* --- ACCIONES --- */}
+                        <View style={styles.actionsContainer}>
+                        <Text style={styles.actionLabel}>Marcar como visto</Text>
+                        <TouchableOpacity onPress={this.toggleViewedStatus}>
                             <Ionicons
-                                name={isViewed ? 'eye' : 'eye-off'} // 'eye' si visto, 'eye-slash' si no visto
-                                size={24}
-                                color={isViewed ? 'orange' : 'gray'} // Color diferente para indicar estado
+                                name={isViewed ? 'eye' : 'eye-off'}
+                                size={30}
+                                color={isViewed ? '#FFC107' : '#6d758c'}
                             />
                         </TouchableOpacity>
+                        </View>
+
+                        {/* --- LISTAS DE CRÉDITOS ANIMADAS --- */}
+                        <CreditsList
+                        title="Directores"
+                        items={episodeDetails?.directores ?? []}
+                        iconName="videocam-outline"
+                        animation={this.posterOpacity} // Usamos la opacidad del poster como animación
+                        />
+                        <CreditsList
+                        title="Escritores"
+                        items={episodeDetails?.escritores  ?? []}
+                        iconName="pencil-outline"
+                        animation={this.posterOpacity}
+                        />
+                        <CreditsList
+                        title="Invitados"
+                        items={episodeDetails?.invitados  ?? []}
+                        iconName="star-outline"
+                        animation={this.posterOpacity}
+                        />
                     </View>
                 </Animated.ScrollView>
         );
     }
 }
 
+// --- ESTILOS ---
 const styles = StyleSheet.create({
-    container: {
+    scrollView: {
         flex: 1,
-        padding: 8,
-        backgroundColor: '#fff',
-        flexGrow: 1,
+        backgroundColor: '#09184D',
     },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 8,
-        paddingTop: 16,
+    container: {
+        paddingBottom: 40,
+        paddingHorizontal: 20,
     },
-    overview: {
-        fontSize: 16,
-        color: '#333',
-        marginBottom: 16,
-    },
-    releaseDate: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 8,
-    },
-    rating: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 8,
-    },
-    poster: {
-        width: 100,
-        height: 150,
-        marginBottom: 16,
-    },
-    backdrop: {
-        width: '100%',
-        height: 200,
-        marginBottom: 16,
-    },
-    button: {
-        backgroundColor: '#007BFF',
-        padding: 10,
-        paddingTop: 12,
-        borderRadius: 5,
-        alignItems: 'center',
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 16,
-    },
+    // Estilos de Carga y Error
     loadingContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#09184D',
     },
     loadingText: {
-        fontSize: 18,
-        color: '#333',
-    },
-    errorText: {
-        fontSize: 18,
-        color: 'red',
-        textAlign: 'center',
-        marginTop: 20,
+        marginTop: 15,
+        fontSize: 16,
+        color: '#FFC107',
+        fontFamily: 'System',
     },
     errorContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        backgroundColor: '#0d1117',
+        padding: 20,
     },
-    posterImage: {
-        width: 100,
-        height: 150,
-        borderRadius: 5,
-        marginBottom: 16,
+    errorText: {
+        marginTop: 15,
+        fontSize: 18,
+        color: '#FF7575',
+        textAlign: 'center',
+        fontFamily: 'System',
     },
-    backdropImage: {
-        width: '50%',// '100%',
-        height: 100,
-        borderRadius: 5,
-        marginBottom: 16,
-    },
-    detailsContainer: {
-        padding: 16,
-        backgroundColor: '#fff',
-        borderRadius: 30,
-        shadowColor: '#000',    // Sombra para el contenedor de detalles
-        shadowOffset: { width: 0, height: 2 }, // Desplazamiento de la sombra
-        shadowOpacity: 0.25,    // Opacidad de la sombra
-        shadowRadius: 3.84,     // Radio de la sombra
-        elevation: 5,           // Elevación para Android
-        margin: 16,             // Margen alrededor del contenedor
-        flex: 1,                // Ocupa todo el espacio disponible
-        justifyContent: 'center', // Centrado vertical
-        alignItems: 'center',    // Centrado horizontal
+    // Estilos de la cabecera
+    headerContainer: {
+        paddingTop: 20,
+        paddingBottom: 20,
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#30363d',
     },
     titleText: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
-        marginBottom: 8,
-        color: '#333',          // Color del texto del título
+        color: '#c9d1d9',
+        textAlign: 'center',
+        marginBottom: 12,
+        fontFamily: 'System',
     },
     overviewText: {
         fontSize: 16,
-        color: '#666',          // Color del texto de la descripción
+        color: '#8b949e',
+        textAlign: 'center',
+        lineHeight: 24,
         marginBottom: 16,
+        fontFamily: 'System',
     },
     releaseDateText: {
         fontSize: 14,
-        color: '#999',          // Color del texto de la fecha de lanzamiento
-        marginBottom: 8,
+        color: '#8b949e',
+        fontStyle: 'italic',
+        fontFamily: 'System',
     },
-    ratingText: {
-        fontSize: 14,
-        color: '#999',          // Color del texto de la calificación
-        marginBottom: 8,
+    // Estilos de la sección de acciones
+    actionsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingVertical: 20,
     },
-    genres: {
-        fontSize: 14,
-        color: '#999',          // Color del texto de los géneros
-        marginBottom: 8,
+    actionLabel: {
+        fontSize: 16,
+        color: '#c9d1d9',
+        fontWeight: '600',
     },
-        eyeIconContainer: {
-        marginRight: 15, // Espacio a la derecha en el header
+    // Estilos para las tarjetas de créditos
+    creditsCard: {
+        backgroundColor: '#161b22', // Azul oscuro, más claro que el fondo
+        borderRadius: 12,
+        padding: 20,
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: '#30363d',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
+        elevation: 8,
+    },
+    creditsHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 12,
+    },
+    creditsTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#FFC107', // Color acentuado para los títulos
+        marginLeft: 10,
+        fontFamily: 'System',
+    },
+    creditsItemsContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap', // Permite que los nombres pasen a la siguiente línea si no caben
+    },
+    creditsItemText: {
+        fontSize: 16,
+        color: '#8b949e',
+        lineHeight: 22,
+        fontFamily: 'System',
     },
 });
