@@ -12,8 +12,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import MenuScreen from './src/presentation/MenuScreen';
 import { EpisodeTabs } from './src/presentation/episode/EpisodeTabs';
 import { QuoteTabs } from './src/presentation/quote/QuoteTabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-const Stack = createNativeStackNavigator(); // Creamos el stack de navegación
+export const Stack = createNativeStackNavigator(); // Creamos el stack de navegación
+export const Tab = createBottomTabNavigator(); // Creamos el stack de navegación para las pestañas (Tab)
 
 function RootStack(): React.JSX.Element {
     return (

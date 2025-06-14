@@ -3,7 +3,7 @@ import { Episode } from '../../domain/model/Episode';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import { EpisodeRepository } from '../../domain/repository/EpisodeRepository';
 import { Logger } from '../../utils/Logger';
-import EyeToggleIcon from '../components/EyeToggleIcon';
+import EyeToggleIcon from '../components/ToggleIcon';
 
 interface EpisodeDetailsProps {
     readonly navigation: any; // Propiedades de navegación

@@ -1,5 +1,7 @@
 
-import { CalendarTabBarIcon, headerBack, HeartTabBarIcon, Stack, StartTabBarIcon, Tab } from '../episode/EpisodeTabs';
+import { Stack, Tab } from '../../../App';
+import { headerBack } from '../components/HeaderBackIcon';
+import { CalendarTabBarIcon, GameTabBarIcon, HeartTabBarIcon } from '../components/Icons';
 import QuoteList from './QuoteList';
 
 function AllQuoteStack({ rootNavigation }: { rootNavigation: any }) {
@@ -95,13 +97,10 @@ export function QuoteTabs({ navigation }: { navigation: any }) {
                             options={{
                                 title: 'Juego de citas',
                                 headerShown: false,
-                                tabBarIcon: StartTabBarIcon,
+                                tabBarIcon: GameTabBarIcon,
                             }} >
                     { () => <GameQuoteStack rootNavigation={navigation} /> }
                 </Tab.Screen>
         </Tab.Navigator>
     );
 }
-
-
-

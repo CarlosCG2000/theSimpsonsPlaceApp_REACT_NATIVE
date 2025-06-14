@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import { Episode } from '../../domain/model/Episode';
-import EyeToggleIcon from '../components/EyeToggleIcon';
+import EyeToggleIcon from '../components/ToggleIcon';
 
 // Importamos el tipo Episode, que es la entidad que vamos a mostrar
 interface EpisodeRowProps {

@@ -1,31 +1,11 @@
 
 import React from 'react';
 
-import { /*View,*/ Platform, /*TouchableOpacity*/
-TouchableOpacity } from 'react-native';
+import { CalendarTabBarIcon, EyeTabBarIcon, HeartTabBarIcon } from '../components/Icons';
+import { Stack, Tab } from '../../../App';
 import EpisodeList from './EpisodeList';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Ionicon from '@react-native-vector-icons/ionicons';
-import EvilIcon from '@react-native-vector-icons/evil-icons';
 import EpisodeDetails from './EpisodeDetails';
-
-export const Stack = createNativeStackNavigator(); // Creamos el stack de navegación
-export const Tab = createBottomTabNavigator(); // Creamos el stack de navegación para las pestañas (Tab)
-export const Icon = Platform.OS === 'ios' ? EvilIcon : Ionicon;
-
-function HeaderBack({ rootNavigation }: { rootNavigation: any }) {
-    return (
-        <TouchableOpacity onPress={ () => rootNavigation.goBack()}>
-            {/* <Text style={styles.inicioText}>Inicio</Text> */}
-            <EvilIcon name="arrow-left" size={32} color="#FFC107" />
-        </TouchableOpacity>
-    );
-}
-
-export function headerBack(rootNavigation: any) {
-    return () => <HeaderBack rootNavigation={rootNavigation} />;
-}
+import { headerBack } from '../components/HeaderBackIcon';
 
 //________________Stacks de navegación de los episodios______________________
 function AllEpisodeStack({ rootNavigation }: { rootNavigation: any }) {
@@ -129,25 +109,10 @@ export function EpisodeTabs({ navigation }: { navigation: any }) {
                                 title: 'Listado de favoritos',
                                 headerShown: false, // Ocultamos el encabezado ya que lo manejamos en el stack
                                 // tabBarLabel:  'Episodios favoritos',
-                                tabBarIcon: StartTabBarIcon,
+                                tabBarIcon: EyeTabBarIcon,
                 }} >
                     { () => <FavEpisodeStack rootNavigation={navigation} /> }
                 </Tab.Screen>
         </Tab.Navigator>
     );
 }
-
-// Los iconos de las pestañas
-export const HeartTabBarIcon = ({ color, size }: { color: string; size: number }) => (
-    <Icon name="archive" size={size} color={color} />
-);
-
-export const CalendarTabBarIcon = ({ color, size }: { color: string; size: number }) => (
-    <Icon name="search" size={size} color={color} />
-);
-
-export const StartTabBarIcon = ({ color, size }: { color: string; size: number }) => (
-    <Icon name="star" size={size} color={color} />
-);
-
-
