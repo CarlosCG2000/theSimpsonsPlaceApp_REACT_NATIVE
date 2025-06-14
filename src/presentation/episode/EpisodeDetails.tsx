@@ -4,6 +4,7 @@ import { Animated, StyleSheet, Text, View } from 'react-native';
 import { EpisodeRepository } from '../../domain/repository/EpisodeRepository';
 import { Logger } from '../../utils/Logger';
 import EyeToggleIcon from '../components/ToggleIcon';
+import i18n from '../../i18n/i18n';
 
 interface EpisodeDetailsProps {
     readonly navigation: any; // Propiedades de navegación
@@ -50,7 +51,7 @@ export default class EpisodeDetails extends React.Component<EpisodeDetailsProps,
                 headerShown: true, // Esto activa el header
                 headerTintColor: '#FFC107', // Color del icono hacia atrás
                 headerBackTitle: 'Atrás', // Texto del botón de retroceso
-                headerTitle: `Episodio: ${episode.titulo}`, // Título del header
+                headerTitle: `${i18n('detailsEpisode')}: ${episode.titulo}`, // Título del header
                 // headerTitleAlign: 'center', // Alineación del título
                 headerStyle: { backgroundColor: '#09184D' }, // Color de fondo del header
                 headerTitleStyle: { fontWeight: 'bold' },

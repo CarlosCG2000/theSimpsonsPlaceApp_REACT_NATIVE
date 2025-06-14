@@ -1,4 +1,6 @@
+
 import { View, Text, Image, Pressable, StyleSheet } from 'react-native';
+import i18n from '../i18n/i18n';
 
 export default function MenuScreen({ navigation }: { navigation: any }) {
     return (
@@ -17,11 +19,15 @@ export default function MenuScreen({ navigation }: { navigation: any }) {
 
             <View style={styles.menuContainer}>
                 <Pressable style={styles.button} onPress={() => navigation.navigate('EpisodeTabs', { screen: 'AllEpisodeStack' })}>
-                    <Text style={styles.buttonText}>Episodes</Text>
+                    <Text style={styles.buttonText}>{ i18n('episodes') }</Text>
                 </Pressable>
 
                 <Pressable style={styles.button} onPress={() => navigation.navigate('QuoteTabs', { screen: 'AllQuoteStack' })}>
-                    <Text style={styles.buttonText}>Quotes & Game</Text>
+                    <Text style={styles.buttonText}>{ i18n('quotes') }</Text>
+                </Pressable>
+
+                <Pressable style={styles.button} onPress={() => navigation.navigate('QuoteTabs', { screen: 'AllQuoteStack' })}>
+                    <Text style={styles.buttonText}>{ i18n('quiz') }</Text>
                 </Pressable>
             </View>
         </View>
