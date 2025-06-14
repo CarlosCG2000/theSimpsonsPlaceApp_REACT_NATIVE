@@ -5,7 +5,7 @@ import EvilIcon from '@react-native-vector-icons/evil-icons';
 function HeaderBack({ rootNavigation }: { rootNavigation: any }) {
     return (
         <TouchableOpacity onPress={ () => rootNavigation.goBack()}>
-            <EvilIcon name="arrow-left" size={32} color="#FFC107" />
+            <EvilIcon name="arrow-left" size={38} color="#FFC107" />
         </TouchableOpacity>
     );
 }
