@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Button, Animated } from 'react-native';
 import { Quote } from '../../domain/model/Quote';
 import { QuoteRepository } from '../../domain/repository/QuoteRepository';
 import { Logger } from '../../utils/Logger';
+import QuoteItem from './QuoteItem';
 
 // Propiedades del componente QuoteList, de momento no necesitamos pasarle nada
 interface QuoteListProps { }
@@ -32,42 +33,45 @@ export default class QuoteList extends React.Component<QuoteListProps, QuoteList
 
     // 2. Método para cargar las citas al montar el componente (solo se ejecuta una vez)
     async componentDidMount() {
-        await this.loadQuote();
+      await this.loadQuote();
     }
 
     render() {
       return (  // boton para generar un nuevo conjunto de citas
           <View style={styles.container}>
-              <Text style={styles.title}>Quote List</Text>
-                <Button
+              <Button
                   title="Generar New Quotes"
                   onPress={this.onSubmit}
-                  color="#841584"
-                />
+                  color="#FFC107" // Color del botón
+              />
               {this.state.loading ? (
               <Text>Loading...</Text>
               ) : (
                 <Animated.FlatList
                       data={ this.state.quotes } // Usamos el estado para obtener la lista de episodios
                       keyExtractor={( quote: Quote ) => quote.cita } // Usamos el id de la película como clave
-                      renderItem={({ item }) => (
-                        <View style={styles.quoteItem}>
-                          <Text style={styles.quoteTitle}>{item.personaje}</Text>
-                          <Text style={styles.quoteDetails}>Quote: {item.cita}</Text>
-                          <Text style={styles.quoteDetails}>Image: {item.imagen}</Text>
-                        </View>
-                      )}
+                      renderItem={ this.renderItem }
                   />
               )}
           </View>
       );
     }
 
+
+    private renderItem = ({ item, index }: { item: Quote, index: number }) => {
+        return (
+            <QuoteItem
+                quote={item}
+                index={index} // Pasamos el índice del item para animaciones
+            />
+        );
+    };
+
     // Método para cargar las citas desde el datasource
     // protected abstract loadQuote(): Promise<Quote>; // Este método se implementa en la clase concreta
     async loadQuote() {
         try {
-            const quotes: Quote[]  = await this.quoteRepository.getQuotes(); // .getQuotesTest();
+            const quotes: Quote[]  = await this.quoteRepository.getQuotesTest(); //.getQuotes()
             logger.info('Citas cargadas: ' + quotes.length);
             this.setState({ quotes: quotes, loading: false }); // Actualizamos el estado con las citas cargadas y cambiamos el loading a false
         } catch (error) {
@@ -88,7 +92,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#09184D',
   },
   title: {
     fontSize: 24,
