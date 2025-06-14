@@ -6,6 +6,7 @@ import { Logger } from '../../utils/Logger';
 // import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import EpisodeItem from './EpisodeItem';
 import EmptyStateView from '../components/EmptyStateView';
+import { AppDatabase } from '../../../App';
 
 // Propiedades del componente EpisodeList, de momento no necesitamos pasarle nada
 export interface EpisodeListProps {
@@ -21,38 +22,68 @@ export interface EpisodeListState {
 const logger = new Logger('EpisodeList');
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms)); // Función para simular una espera
 
+
 export default abstract class EpisodeList extends React.Component<EpisodeListProps, EpisodeListState> {
 
-    protected episodeRepository: EpisodeRepository; // Instancia del datasource para obtener los episodios
+    protected episodeRepository: any; // Instancia del datasource para obtener los episodios
+    static contextType = AppDatabase; // Declara que este componente consumirá el contexto AppDatabase
+
 
     // 1. Constructor para inicializar el estado y el repositorio de episodios
-    constructor(props: EpisodeListProps) {                  // Le pasamos las propiedades del componente
-        super(props);                                       // Llamada al constructor de la clase base
+    constructor(props: EpisodeListProps) {                  // Recibe las propiedades definidas en EpisodeListProps
+        super(props);                                       // Llama al constructor de la clase base (React.Component)
 
-        this.state = {  episodes: [],                       // Inicializamos el estado con un array vacío de episodios
-                        loading: true };
+        this.state = {  episodes: [],                       // Inicializa 'episodes' como un array vacío en el estado
+                        loading: true };                     // Inicializa 'loading' como true, para mostrar un indicador de carga
 
-        this.episodeRepository = new EpisodeRepository();   // Creamos una instancia del datasource para obtener los episodios
+        // Crea una instancia del EpisodeRepository.
+        // NOTA IMPORTANTE: En este punto, la instancia de la base de datos (db) no está disponible,
+        // ya que el contexto solo se puede acceder *después* de que el componente se ha montado.
+        // Necesitaremos manejar esto más abajo.
+        this.episodeRepository = new EpisodeRepository();
     }
 
     // 2. Método para cargar los episodios al montar el componente (solo se ejecuta una vez)
     async componentDidMount() {
+        // Accede a la instancia de la base de datos desde el contexto.
+        // 'this.context' es proporcionado por React debido a 'static contextType = AppDatabase'.
+        const db = this.context;
+
+        // Si la instancia de la base de datos no está disponible (ej. si la DB aún no ha terminado de inicializarse en App.tsx),
+        // registramos un error y salimos para evitar problemas.
+        if (!db) {
+            logger.error('Base de datos no disponible en EpisodeList. No se puede inicializar el repositorio.');
+            this.setState({ loading: false }); // Aseguramos que el estado de carga se desactive
+            return;
+        }
+
+        // Pasa la instancia de la base de datos al repositorio.
+        // Esto es crucial para que el repositorio pueda crear y utilizar su EpisodeSQLiteDatasource.
+        this.episodeRepository.setDatabaseInstance(db);
+
+        // Llama al método para iniciar la carga de episodios.
         await this.loadEpisodes();
     }
 
-    protected abstract getEpisodes(search?: string): Promise<Episode[]>; // Método abstracto se debe implementar en las subclases para obtener los episodios, puede ser desde una API, filtrado, BD, etc.
+    // 3. Método abstracto: debe ser implementado por las subclases
+    // Este método es la "puerta" para que cada subclase defina cómo obtener sus propios episodios.
+    // Podría ser desde una API, una base de datos local, un archivo JSON, etc.
+    protected abstract getEpisodes(): Promise<Episode[]>;
 
-    // Método para cargar los episodios desde el datasource (de momento se realiza aqui, luego en subclases para cargar desde diferentes logicas)
-    // protected abstract loadEpisodes(searchFilter: String): Promise<Episode>;
+    // 4. Método para cargar los episodios (implementación concreta en la clase abstracta)
     async loadEpisodes() {
         try {
-            await sleep(300);           // Simulamos una espera de 1 segundo para simular la carga de datos
-            const episodes: Episode[] = await this.getEpisodes(); // this.episodeRepository.getAllEpisodes();
-            logger.info('Episodios cargados:' + episodes.length);
+            await sleep(300);           // Simula una espera para mostrar el indicador de carga (UX)
+            // Llama al método abstracto 'getEpisodes()'.
+            // La implementación específica de 'getEpisodes' en la subclase será la que se ejecute.
+            const episodes: Episode[] = await this.getEpisodes();
+            logger.info('Episodios cargados: ' + episodes.length);
 
-            this.setState({ episodes: episodes, loading: false }); // Actualizamos el estado con los episodios cargados y cambiamos el loading a false
+            // Actualiza el estado con los episodios obtenidos y desactiva el indicador de carga.
+            this.setState({ episodes: episodes, loading: false });
         } catch (error) {
-            logger.error('Error al cargar los episodios:' + error);
+            logger.error('Error al cargar los episodios: ' + error);
+            this.setState({ loading: false, episodes: [] }); // En caso de error, oculta la carga y vacía la lista
         }
     }
 

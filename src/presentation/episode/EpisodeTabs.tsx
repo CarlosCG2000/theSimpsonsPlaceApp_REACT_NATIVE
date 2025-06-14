@@ -4,11 +4,11 @@ import React from 'react';
 import { CalendarTabBarIcon, EyeTabBarIcon, HeartTabBarIcon } from '../components/Icons';
 import { headerBack } from '../components/HeaderBackIcon';
 import { Stack, Tab } from '../../../App';
-import EpisodeList from './EpisodeList';
 import EpisodeDetails from './EpisodeDetails';
 import i18n from '../../i18n/i18n';
 import EpisodeListAll from './EpisodeListAll';
 import EpisodeListSearch from './EpisodeListSearch';
+import EpisodeListView from './EpisodeListView';
 
 //________________Stacks de navegación de los episodios______________________
 function AllEpisodeStack({ rootNavigation }: { rootNavigation: any }) {
@@ -57,7 +57,7 @@ function ViewEpisodeStack({ rootNavigation }: { rootNavigation: any }) {
     return (
         <Stack.Navigator initialRouteName="EpisodeList">
             <Stack.Screen   name="EpisodeList"
-                            component={EpisodeList as any}
+                            component={EpisodeListView as any}
                             options={{
                             headerTintColor: '#FFC107',
                             headerBackTitle: 'Atrás',

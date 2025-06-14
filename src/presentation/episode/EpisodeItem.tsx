@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import { Episode } from '../../domain/model/Episode';
-import EyeToggleIcon from '../components/ToggleIcon';
 
 // Importamos el tipo Episode, que es la entidad que vamos a mostrar
 interface EpisodeRowProps {
@@ -31,11 +30,10 @@ export default function EpisodeItem(props: EpisodeRowProps) { // en forma de fun
             <Animated.View style={[styles.container_item, { opacity }]}>
                 <TouchableHighlight onPress={onPress} underlayColor="#639BFF" style={styles.touchable}>
                     <View style={styles.container_info}>
-                            <Text style={styles.title}>{episode.episodio} - {episode.titulo}</Text>
+                            <Text style={styles.title}> {episode.titulo}</Text>
                         <View style={styles.rowBetween}>
+                            <Text style={styles.overview}>Capitulo {episode.episodio}</Text>
                             <Text style={styles.overview}>Temporada {episode.temporada}</Text>
-                            <Text style={styles.overview}>Fecha {episode.lanzamiento}</Text>
-                            <EyeToggleIcon />
                         </View>
                         <Text numberOfLines={1} style={styles.description}>{episode.descripcion}</Text>
                     </View>
@@ -85,11 +83,11 @@ const styles = StyleSheet.create({
     description: {
         fontSize: 16,
         color: '#FFC107', // Color oscuro para la descripción
+        fontStyle: 'italic', // Estilo de fuente para la descripción
     },
     overview: {
         color: '#FFC107', // Color gris para la descripción
         fontSize: 14,
-        fontStyle: 'italic', // Estilo de fuente para la descripción
         textAlign: 'center', // Centrar el texto
         fontWeight: '500', // Negrita para destacar
     },

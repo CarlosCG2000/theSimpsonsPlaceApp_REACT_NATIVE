@@ -1,10 +1,12 @@
 import React from 'react';
 import { Episode } from '../../domain/model/Episode';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Animated, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { EpisodeRepository } from '../../domain/repository/EpisodeRepository';
 import { Logger } from '../../utils/Logger';
-import EyeToggleIcon from '../components/ToggleIcon';
+// import EyeToggleIcon from '../components/ToggleIcon';
 import i18n from '../../i18n/i18n';
+import { AppDatabase } from '../../../App';
+import Ionicons from '@react-native-vector-icons/ionicons';
 
 interface EpisodeDetailsProps {
     readonly navigation: any; // Propiedades de navegación
@@ -21,6 +23,7 @@ interface EpisodeDetailsState {
     readonly loading: boolean; // Indicador de carga
     readonly error: string | null; // Mensaje de error
     readonly initialAnimated: boolean; // Indicador de si la animación inicial se ha completado
+    isViewed: boolean; // <-- NUEVO ESTADO para controlar si el episodio está visto
 }
 
 const logger = new Logger('EpisodeDetails'); // Instancia del logger para registrar mensajes
@@ -33,6 +36,11 @@ export default class EpisodeDetails extends React.Component<EpisodeDetailsProps,
     private posterScale: Animated.Value = new Animated.Value(0.8); // Valor animado para la escala del poster
     private scrollY: Animated.Value = new Animated.Value(0); // Valor animado para el desplazamiento del scroll
 
+    // Contexto para la base de datos, ¡se debe tipar correctamente!
+    // Para componentes de clase, se usa `static contextType = AppDatabase;`
+    static contextType = AppDatabase;
+    // context!: React.ContextType<typeof AppDatabase>; // Para TypeScript: asegurar el tipo correcto del contexto
+
     // Inicializamos el componente con las propiedades recibidas
     public constructor(props: EpisodeDetailsProps) {
         super(props);
@@ -42,6 +50,7 @@ export default class EpisodeDetails extends React.Component<EpisodeDetailsProps,
             loading: true, // Indicamos que estamos cargando los detalles
             error: null, // No hay errores inicialmente
             initialAnimated: true, // Indicador de si la animación inicial se ha completado
+            isViewed: false, // Inicialmente asumimos que no está visto
         };
 
         const { navigation, route } = props; // Obtenemos las propiedades de navegación
@@ -62,14 +71,30 @@ export default class EpisodeDetails extends React.Component<EpisodeDetailsProps,
 
      // Método despues del montaje del componente (primer renderizado)
     public async componentDidMount() {
+
+        const db = this.context; // Accede a la instancia de la BD desde el contexto
+
+        if (!db) {
+            logger.error('Base de datos no disponible en EpisodeDetails.');
+            this.setState({ loading: false, error: 'Error: Base de datos no inicializada.' });
+            return;
+        }
+
+        // Pasa la instancia de la BD al repositorio
+        this.episodeRepository.setDatabaseInstance(db);
+
         try {
             const { episode } = this.props.route.params; // Obtenemos el episodio desde las propiedades de navegación
             await sleep(300); // Simulamos una espera de 0,2 segundos para mostrar el indicador de carga
 
+            // Comprobar si el episodio ya está visto
+            const isViewed = await this.episodeRepository.isEpisodeViewed(episode.id);
+
             this.setState({
-                episodeDetails: episode, // Guardamos los detalles de la película en el estado
-                loading: false, // Indicamos que ya no estamos cargando
-                error: null, // No hay errores
+                episodeDetails: episode,
+                loading: false,
+                error: null,
+                isViewed: isViewed, // Actualiza el estado de isViewed
             });
 
             logger.info('[componentDidMount] Detalles de la episodio:' + episode);
@@ -84,93 +109,96 @@ export default class EpisodeDetails extends React.Component<EpisodeDetailsProps,
 
         // Iniciamos la animación de opacidad y escala del poster
         Animated.parallel([
-            Animated.timing(this.posterOpacity, {
-                toValue: 1, // Valor final de opacidad
-                duration: 500, // Duración de la animación en milisegundos
-                useNativeDriver: true, // Usamos el driver nativo para mejorar el rendimiento
-            }),
-            Animated.timing(this.posterScale, {
-                toValue: 1, // Valor final de escala
-                duration: 500, // Duración de la animación en milisegundos
-                useNativeDriver: true, // Usamos el driver nativo para mejorar el rendimiento
-            }),
-            // Animated.spring(this.posterScale, {
-            //     toValue: 1, // Valor final de escala
-            //     friction: 3, // Fricción de la animación
-            //     tension: 40, // Tensión de la animación
-            //     useNativeDriver: true, // Usamos el driver nativo para mejorar el rendimiento
-            // }),
-        ]).start(() => { // Iniciamos la animación
-            this.setState({ initialAnimated: false }); // Indicamos que la animación inicial se ha completado
+            Animated.timing(this.posterOpacity, { toValue: 1, duration: 500, useNativeDriver: true }),
+            Animated.timing(this.posterScale, { toValue: 1, duration: 500, useNativeDriver: true }),
+        ]).start(() => {
+            this.setState({ initialAnimated: false });
             logger.info('[componentDidMount] Animación inicial completada');
         });
-
     }
 
+    // Nuevo método para alternar el estado de "visto"
+    private toggleViewedStatus = async () => {
+        const { episodeDetails, isViewed } = this.state;
+        if (!episodeDetails) {return;}
+
+        try {
+            if (isViewed) {
+                await this.episodeRepository.removeViewedEpisode(episodeDetails.id);
+                logger.info(`👁️ Episodio ${episodeDetails.titulo} marcado como NO visto.`);
+            } else {
+                await this.episodeRepository.addViewedEpisode(episodeDetails);
+                logger.info(`👁️ Episodio ${episodeDetails.titulo} marcado como visto.`);
+            }
+            this.setState(prevState => ({ isViewed: !prevState.isViewed })); // Alternar el estado local
+        } catch (error) {
+            logger.error(`Error al alternar estado de visto para ${episodeDetails.titulo}: ${error}`);
+            // Podrías mostrar un Toast o alerta al usuario aquí
+        }
+    };
+
         public render() {
-        const { episodeDetails, loading, error /*initialAnimated*/ } = this.state; // Obtenemos el estado del componente
+        const { episodeDetails, loading, error, isViewed } = this.state;
+
+        // Renderiza el botón de ojo dinámicamente en el header
+        // this.props.navigation.setOptions({
+        //     headerRight: () => (
+        //         <TouchableOpacity onPress={this.toggleViewedStatus} style={styles.eyeIconContainer}>
+        //             <Ionicons
+        //                 name={isViewed ? 'eye' : 'eye-off'} // 'eye' si visto, 'eye-slash' si no visto
+        //                 size={24}
+        //                 color={isViewed ? 'orange' : 'gray'} // Color diferente para indicar estado
+        //             />
+        //         </TouchableOpacity>
+        //     ),
+        // });
 
         return (
             loading ? (
                 <View style={styles.loadingContainer}>
-                    <Text style={styles.loadingText}>Cargando detalles de la película...</Text>
+                    <ActivityIndicator size="large" color="#FFC107" />
+                    <Text style={styles.loadingText}>Cargando detalles del episodio...</Text>
                 </View>
             ) : error ? (
                 <View style={styles.errorContainer}>
                     <Text style={styles.errorText}>{error}</Text>
                 </View>
             ) :
-                // Si no hay errores y no estamos cargando, mostramos los detalles de la película
                 <Animated.ScrollView contentContainerStyle={styles.container}
-                    onScroll={this.state.initialAnimated // Usamos Animated.event para manejar el scroll y aplicar la animación de escala al poster
-                        ? undefined // Si la animación inicial no se ha completado, no aplicamos el evento de scroll
+                    onScroll={this.state.initialAnimated
+                        ? undefined
                         : Animated.event(
                             [{ nativeEvent: { contentOffset: { y: this.scrollY } } }],
                             { useNativeDriver: true }
                         )}
                 >
-                    <View  style={[styles.detailsContainer,
-                                // initialAnimated ?
-                                // { opacity: this.posterOpacity, transform: [{ scale: this.posterScale }] }
-                                // : {
-                                //     opacity: this.scrollY.interpolate({
-                                //         inputRange: [0, 200],
-                                //         outputRange: [1, 0],
-                                //         extrapolate: 'clamp',
-                                //     }),
-                                //     transform: [{
-                                //         scale: this.scrollY.interpolate({
-                                //             inputRange: [0, 200],
-                                //             outputRange: [1, 0.8],
-                                //             extrapolate: 'clamp',
-                                //         }),
-                                //     }],
-                                // },
-                            ]}>
-
+                    <View style={styles.detailsContainer}>
                         <Text style={styles.titleText}>{episodeDetails?.titulo}</Text>
-
                         <Text style={styles.overviewText}>
                             {episodeDetails?.descripcion}
                         </Text>
-                        <Text>
-                            {episodeDetails?.directores ?? []}
-                        </Text>
+                        <Text>Directores: {episodeDetails?.directores?.join(', ') || 'N/A'}</Text>
+                        <Text>Escritores: {episodeDetails?.escritores?.join(', ') || 'N/A'}</Text>
+                        <Text>Invitados: {episodeDetails?.invitados?.join(', ') || 'N/A'}</Text>
 
                         <Text style={styles.releaseDateText}>
                             Fecha de lanzamiento: {episodeDetails?.lanzamiento}
                         </Text>
                         <Text style={styles.ratingText}>
-                            Calificación: {episodeDetails?.valoracion}
+                            Calificación: {episodeDetails?.valoracion ? 'Sí' : 'No'}
                         </Text>
-
-                        <EyeToggleIcon />
+                        <TouchableOpacity onPress={this.toggleViewedStatus} style={styles.eyeIconContainer}>
+                            <Ionicons
+                                name={isViewed ? 'eye' : 'eye-off'} // 'eye' si visto, 'eye-slash' si no visto
+                                size={24}
+                                color={isViewed ? 'orange' : 'gray'} // Color diferente para indicar estado
+                            />
+                        </TouchableOpacity>
                     </View>
                 </Animated.ScrollView>
         );
     }
 }
-
 
 const styles = StyleSheet.create({
     container: {
@@ -292,5 +320,8 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#999',          // Color del texto de los géneros
         marginBottom: 8,
+    },
+        eyeIconContainer: {
+        marginRight: 15, // Espacio a la derecha en el header
     },
 });
