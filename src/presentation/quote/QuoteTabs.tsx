@@ -1,7 +1,8 @@
+import React from 'react';
 
+import { CalendarTabBarIcon, GameTabBarIcon, HeartTabBarIcon } from '../components/Icons';
 import { Stack, Tab } from '../../../App';
 import { headerBack } from '../components/HeaderBackIcon';
-import { CalendarTabBarIcon, GameTabBarIcon, HeartTabBarIcon } from '../components/Icons';
 import QuoteList from './QuoteList';
 
 function AllQuoteStack({ rootNavigation }: { rootNavigation: any }) {

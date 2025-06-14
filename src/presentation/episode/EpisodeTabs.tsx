@@ -2,10 +2,10 @@
 import React from 'react';
 
 import { CalendarTabBarIcon, EyeTabBarIcon, HeartTabBarIcon } from '../components/Icons';
+import { headerBack } from '../components/HeaderBackIcon';
 import { Stack, Tab } from '../../../App';
 import EpisodeList from './EpisodeList';
 import EpisodeDetails from './EpisodeDetails';
-import { headerBack } from '../components/HeaderBackIcon';
 
 //________________Stacks de navegación de los episodios______________________
 function AllEpisodeStack({ rootNavigation }: { rootNavigation: any }) {
