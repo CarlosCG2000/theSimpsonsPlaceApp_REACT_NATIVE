@@ -9,4 +9,5 @@ export default {
     episodeList: 'Lista de episodios',
     episodeFilter: 'Filtro de episodios',
     episodeView: 'Episodios vistos',
+    playholderSearch: 'Buscar por título...',
 };

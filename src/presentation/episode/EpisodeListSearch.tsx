@@ -1,17 +1,16 @@
 import React from 'react';
-import { View, StyleSheet, TextInput, ActivityIndicator, Animated,
-    Text, // Añadir Text
-    TouchableOpacity, // Añadir TouchableOpacity
- } from 'react-native';
+import { View, StyleSheet, TextInput, ActivityIndicator, Animated, Text, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-// import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import i18n from '../..//i18n/i18n';
 
 import EpisodeItem from './EpisodeItem';
 import { Episode } from '../../domain/model/Episode';
 import { EpisodeRepository } from '../../domain/repository/EpisodeRepository';
 import { Logger } from '../../utils/Logger';
 import EmptyStateView from '../components/EmptyStateView';
+import { EpisodeFilter } from '../../domain/model/EpisodeFilter';
+import Icon from '@react-native-vector-icons/ionicons';
 
 interface EpisodeListSearchProps {
     readonly navigation: any;
@@ -21,11 +20,8 @@ interface EpisodeListSearchProps {
 interface EpisodeListSearchState {
     readonly episodes: ReadonlyArray<Episode>;
     readonly loading: boolean;
-    readonly search: string;
-    readonly season: number | null;
-    readonly dateStart: Date | null;
-    readonly dateEnd: Date | null;
-    showSeasonPicker: boolean; // <-- NUEVO ESTADO para controlar la visibilidad del Picker
+    readonly episodeFilter: EpisodeFilter
+    showSeasonPicker: boolean; // <-- Para controlar la visibilidad del Picker
 }
 
 const logger = new Logger('EpisodeListSearch');
@@ -33,47 +29,63 @@ const logger = new Logger('EpisodeListSearch');
 export default class EpisodeListSearch extends React.Component<EpisodeListSearchProps, EpisodeListSearchState> {
     private episodeRepository: EpisodeRepository;
 
+    private searchTimeout: NodeJS.Timeout | null = null; // "debounce" la búsqueda
+
     constructor(props: EpisodeListSearchProps) {
         super(props);
 
         this.state = {
             episodes: [],
             loading: true,
-            search: '',  season: null,
-            dateStart: new Date(1989, 11, 16), dateEnd: new Date(),
+            episodeFilter: new EpisodeFilter('', null, new Date(1989, 11, 16), new Date()), // Inicializamos el filtro de episodios
             showSeasonPicker: false, // Inicialmente oculto
         };
 
         this.episodeRepository = new EpisodeRepository();
     }
 
-    async componentDidMount() {
-        await this.loadEpisodes();
+    async componentDidMount() { // después de que el componente ha sido montado, se ejecuta este método
+        await this.loadFilteredEpisodes();
     }
 
-    async loadEpisodes() {
+    async loadFilteredEpisodes() {
+        this.setState({ loading: true });
+
         try {
-            const episodes = await this.episodeRepository.getEpisodesByName(this.props.searchFilter ?? '');
-            logger.info('Episodios cargados:' + episodes.length);
+            const episodes = await this.episodeRepository.getFilteredEpisodes(this.state.episodeFilter);
+            logger.info(`Vista: Episodios cargados y filtrados: ${episodes.length}`);
             this.setState({ episodes, loading: false });
         } catch (error) {
-            logger.error('Error al cargar episodios:' + error);
+            logger.error('Error al cargar episodios con filtros:' + error);
+            this.setState({ episodes: [],loading: false });
         }
     }
 
-    private filterEpisodes(): Episode[] {
-        const { episodes, search, season, dateStart, dateEnd } = this.state;
-        return episodes.filter((episode) => {
-            const matchesTitle = episode.titulo.toLowerCase().includes(search.toLowerCase());
-            const matchesSeason = season ? episode.temporada === season : true;
-            const matchesDateStart = dateStart ? new Date(episode.lanzamiento) >= dateStart : true;
-            const matchesDateEnd = dateEnd ? new Date(episode.lanzamiento) <= dateEnd : true;
-            return matchesTitle && matchesSeason && matchesDateStart && matchesDateEnd;
+    // Método para manejar cambios en los filtros y disparar la recarga
+    handleFilterChange = (filterName: keyof EpisodeFilter, value: any) => {
+        // Nueva copia del objeto episodeFilter
+        const updatedEpisodeFilter = {
+            ...this.state.episodeFilter, // Copiamos todas las propiedades existentes
+            [filterName]: value,         // Actualizamos la propiedad específica
+        };
+
+        this.setState({ episodeFilter: updatedEpisodeFilter }, () => // Reemplazamos el episodeFilter con la nueva copia
+        {
+            if (filterName === 'search') { // Si el cambio es en la búsqueda de texto, usamos debounce
+                if (this.searchTimeout) { clearTimeout(this.searchTimeout); } // Limpiamos el timeout anterior si existe
+                this.searchTimeout = setTimeout(() => this.loadFilteredEpisodes(), 300); // Espera 300ms antes de buscar
+            } else { // Para los demás filtros, carga inmediatamente
+                this.loadFilteredEpisodes();
+            }
         });
-    }
+    };
+
+    // Limpiar el campo de búsqueda (icono de X en el 'input text' para limpiar)
+    handleClearSearch = () => this.handleFilterChange('search', ''); // Establece el filtro de búsqueda a una cadena vacía
 
     render() {
-        const { loading, search, season, dateStart, dateEnd, showSeasonPicker  } = this.state;
+        const { loading, showSeasonPicker } = this.state;
+        const { search, season, dateStart, dateEnd } = this.state.episodeFilter; // Desestructuramos los filtros
 
         if (loading) {
             return (
@@ -83,20 +95,29 @@ export default class EpisodeListSearch extends React.Component<EpisodeListSearch
             );
         }
 
-        const filteredEpisodes = this.filterEpisodes();
+        const filteredEpisodes = this.state.episodes; // Los episodios filtrados por el repositorio
 
         return (
             <View style={ styles.flatList }>
                 <View style={styles.filters}>
-                    <TextInput
-                        style={styles.input}
-                        placeholder="Buscar por título..."
-                        value={search}
-                        onChangeText={(text) => this.setState({ search: text })}
-                        placeholderTextColor="rgba(0, 0, 0, 0.5)" // Cambia el color del placeholder
-                    />
+                    <View style={styles.searchInputContainer}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder={ i18n('playholderSearch') }
+                            value={search}
+                            onChangeText={(text) => this.handleFilterChange('search', text)}
+                            placeholderTextColor="rgba(0, 0, 0, 0.5)"
+                        />
+                        {(search ?? '').length > 0 && (
+                            <TouchableOpacity
+                                onPress={this.handleClearSearch}
+                                style={styles.clearButton}
+                            >
+                                <Icon name="close" size={20} color="#999" /> {/* Icono de círculo con X */}
+                            </TouchableOpacity>
+                        )}
+                    </View>
 
-                     {/* Lógica para el Picker de Temporada */}
                     <TouchableOpacity
                         style={styles.pickerToggle}
                         onPress={() => this.setState(prevState => ({ showSeasonPicker: !prevState.showSeasonPicker }))}
@@ -111,27 +132,28 @@ export default class EpisodeListSearch extends React.Component<EpisodeListSearch
                             selectedValue={season}
                             style={styles.picker} // Puedes ajustar el estilo para que sea más compacto
                             onValueChange={(value) => {
-                                this.setState({ season: value === 0 ? null : value, showSeasonPicker: false }); // Ocultar después de seleccionar
+                                this.handleFilterChange('season', value === 0 ? null : value); // Llama al manejador
+                                this.setState({ showSeasonPicker: false }); // Oculta después de seleccionar
                             }}
                         >
                             <Picker.Item label="Todas las temporadas" value={0} />
 
-                            {[...Array(15)].map((_, i) => (
+                            {[...Array(25)].map((_, i) => (
                                 <Picker.Item key={i + 1} label={`Temporada ${i + 1}`} value={i + 1} />
                             ))}
 
                         </Picker>
                     )}
 
-
                     <View style={styles.dateRow}>
                         <DateTimePicker
-                            value={dateStart || new Date()}
+                            value={dateStart || new Date(1989, 11, 16)}
                             style={styles.datePicker}
+                            mode="date"
                             display="default"
-                            onChange={(_, selectedDate) => this.setState({
-                                dateStart: selectedDate || dateStart,
-                            })}
+                            onChange={(_, selectedDate) => (
+                                this.handleFilterChange('dateStart', selectedDate || dateStart) // Llama al manejador
+                            )}
                         />
 
                         <DateTimePicker
@@ -139,9 +161,9 @@ export default class EpisodeListSearch extends React.Component<EpisodeListSearch
                             style={styles.datePicker}
                             mode="date"
                             display="default"
-                            onChange={(_, selectedDate) => this.setState({
-                                dateEnd: selectedDate || dateEnd,
-                            })}
+                            onChange={(_, selectedDate) => (
+                                this.handleFilterChange('dateEnd', selectedDate || dateEnd) // Llama al manejador
+                            )}
                         />
                     </View>
                 </View>
@@ -162,8 +184,10 @@ export default class EpisodeListSearch extends React.Component<EpisodeListSearch
     }
 
     private onRefresh = async () => {
-        this.setState({ loading: true, episodes: [] });
-        await this.loadEpisodes();
+        this.setState({ loading: true, episodes: [] }); // Reiniciamos el estado a loading y sin episodios
+        await this.loadFilteredEpisodes(); // Volvemos a cargar los episodios
+        logger.info('Reiniciando la lista de episodios y filtrado de búsqueda');
+        this.searchTimeout = null; // Limpiamos el temporizador de búsqueda
     };
 
     private renderEmptyComponent = () => (
@@ -197,9 +221,9 @@ const styles = StyleSheet.create({
         backgroundColor: '#09184D',
     },
     containerLoading: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        flex: 1,                    // Ocupa toda la pantalla
+        justifyContent: 'center',   // Centrado vertical
+        alignItems: 'center',       // Centrado horizontal
         backgroundColor: '#09184D',
     },
     emptyView: {
@@ -210,16 +234,28 @@ const styles = StyleSheet.create({
     },
     filters: {
         padding: 10,
-        backgroundColor: '#1E2A78',
+        backgroundColor: '#09184D',
+    },
+    searchInputContainer: {
+        flexDirection: 'row', // Para que el input y el botón estén en la misma fila
+        alignItems: 'baseline', // Alinea verticalmente el input y el icono
+       // backgroundColor: '#4E5D9C',
+        borderRadius: 5,
+        marginBottom: 10,
+        paddingRight: 10, // Espacio para el icono
+    },
+    clearButton: {
+        padding: 5, // Aumenta el área de toque del icono
     },
     input: {
         backgroundColor: '#4E5D9C',
         paddingHorizontal: 10,
         paddingVertical: 8,
         borderRadius: 5,
-        marginBottom: 10,
         color: 'black',
         fontSize: 18,
+        marginLeft: 30, // Espacio para el icono de limpiar
+        width: '87%', // Asegura que el input ocupe todo el ancho disponible
     },
     picker: {
         backgroundColor: '#4E5D9C',
