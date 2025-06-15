@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button, Animated, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Animated, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { Quote } from '../../domain/model/Quote';
 import { QuoteRepository } from '../../domain/repository/QuoteRepository';
 import { Logger } from '../../utils/Logger';
@@ -50,11 +50,14 @@ export default class QuoteList extends React.Component<QuoteListProps, QuoteList
 
       return (  // boton para generar un nuevo conjunto de citas
           <View style={styles.container}>
-              <Button
-                  title="Generar New Quotes"
+
+              <TouchableOpacity
+                  style={styles.buttonQuotes} // Aplicar estilos adicionales para diferenciar
                   onPress={this.onSubmit}
-                  color="#FFC107" // Color del botón
-              />
+              >
+                  <Text style={styles.buttonText}>Generar New Quotes</Text>
+              </TouchableOpacity>
+
               {this.state.loading ? (
               <Text>Loading...</Text>
               ) : (
@@ -122,10 +125,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
-      containerLoading: {
-        flex: 1,                    // Ocupa toda la pantalla
-        justifyContent: 'center',   // Centrado vertical
-        alignItems: 'center',       // Centrado horizontal
-        backgroundColor: '#09184D',
+    containerLoading: {
+      flex: 1,                    // Ocupa toda la pantalla
+      justifyContent: 'center',   // Centrado vertical
+      alignItems: 'center',       // Centrado horizontal
+      backgroundColor: '#09184D',
+  },
+  buttonQuotes: {
+        backgroundColor: '#FFC107',
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        marginTop: 10,
+        textAlign: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
     },
+    buttonText: { color: '#0C134F', fontWeight: 'bold' },
 });
