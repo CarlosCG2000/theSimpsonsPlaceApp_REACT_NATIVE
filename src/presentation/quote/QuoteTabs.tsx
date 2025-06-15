@@ -7,6 +7,7 @@ import QuoteList from './QuoteList';
 import QuoteListSearch from './QuoteItemSearch';
 import StartGame from './game/StartGame';
 import QuestionGame from './game/QuestionGame';
+import ResultGame from './game/ResultGame';
 
 function AllQuoteStack({ rootNavigation }: { rootNavigation: any }) {
     return (
@@ -62,7 +63,8 @@ function GameQuoteStack({ rootNavigation }: { rootNavigation: any }) {
                             headerLeft: headerBack(rootNavigation),
                             }}
             />
-            <Stack.Screen name="QuestionGame" component={QuestionGame} />
+            <Stack.Screen name="QuestionGame" component={QuestionGame as any} />
+            <Stack.Screen name="ResultGame" component={ResultGame as any} />
         </Stack.Navigator>
     );
 }
