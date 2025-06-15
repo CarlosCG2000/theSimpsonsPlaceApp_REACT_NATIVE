@@ -3,6 +3,7 @@ import React from 'react';
 import { Logger } from '../../../utils/Logger';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { scheduleReminderNotification } from '../../../utils/ReminderNotification';
 
 export interface ResultGameProps {
     readonly navigation: any
@@ -44,6 +45,12 @@ export default class ResultGame extends React.Component<ResultGameProps, ResultG
         const { puntuacion } = this.props.route.params;
         await this.anadirHistorialPuntuacion(puntuacion);
         await this.cargarHistorialPuntuacion();
+
+        scheduleReminderNotification(
+            '¡Vuelve a jugar!',
+            'Homer extraña tus taps 🍩',
+            10 // 60 * 60 * 3 // en 3 horas
+        );
     }
 
     async cargarHistorialPuntuacion() {
