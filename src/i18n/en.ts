@@ -11,4 +11,5 @@ export default {
     episodeFilter: 'Episode Filter',
     episodeView: 'Viewed Episodes',
     playholderSearch: 'Search by title...',
+    playholderSearchQuote: 'Search by quote...',
 };

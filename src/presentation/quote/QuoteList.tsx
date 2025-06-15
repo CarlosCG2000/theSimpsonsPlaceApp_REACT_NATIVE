@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, Button, Animated } from 'react-native';
+import { View, Text, StyleSheet, Button, Animated, ActivityIndicator } from 'react-native';
 import { Quote } from '../../domain/model/Quote';
 import { QuoteRepository } from '../../domain/repository/QuoteRepository';
 import { Logger } from '../../utils/Logger';
@@ -37,6 +37,17 @@ export default class QuoteList extends React.Component<QuoteListProps, QuoteList
     }
 
     render() {
+      const { loading } = this.state;
+
+      // Si estamos cargando, mostramos un indicador de carga
+      if (loading) {
+          return (
+              <View style={styles.containerLoading}>
+                  <ActivityIndicator size="large" color="orange" />
+              </View>
+          );
+      }
+
       return (  // boton para generar un nuevo conjunto de citas
           <View style={styles.container}>
               <Button
@@ -56,7 +67,6 @@ export default class QuoteList extends React.Component<QuoteListProps, QuoteList
           </View>
       );
     }
-
 
     private renderItem = ({ item, index }: { item: Quote, index: number }) => {
         return (
@@ -112,4 +122,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
   },
+      containerLoading: {
+        flex: 1,                    // Ocupa toda la pantalla
+        justifyContent: 'center',   // Centrado vertical
+        alignItems: 'center',       // Centrado horizontal
+        backgroundColor: '#09184D',
+    },
 });

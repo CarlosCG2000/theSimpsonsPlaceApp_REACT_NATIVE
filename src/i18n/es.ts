@@ -10,4 +10,5 @@ export default {
     episodeFilter: 'Filtro de episodios',
     episodeView: 'Episodios vistos',
     playholderSearch: 'Buscar por título...',
+    playholderSearchQuote: 'Buscar por cita...',
 };

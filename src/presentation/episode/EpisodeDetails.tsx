@@ -127,15 +127,14 @@ export default class EpisodeDetails extends React.Component<EpisodeDetailsProps,
         try {
             if (isViewed) {
                 await this.episodeRepository.removeViewedEpisode(episodeDetails.id);
-                logger.info(`👁️ Episodio ${episodeDetails.titulo} marcado como NO visto.`);
+                logger.info(`Episodio ${episodeDetails.titulo} marcado como NO visto.`);
             } else {
                 await this.episodeRepository.addViewedEpisode(episodeDetails);
-                logger.info(`👁️ Episodio ${episodeDetails.titulo} marcado como visto.`);
+                logger.info(`Episodio ${episodeDetails.titulo} marcado como visto.`);
             }
             this.setState(prevState => ({ isViewed: !prevState.isViewed })); // Alternar el estado local
         } catch (error) {
             logger.error(`Error al alternar estado de visto para ${episodeDetails.titulo}: ${error}`);
-            // Podrías mostrar un Toast o alerta al usuario aquí
         }
     };
 

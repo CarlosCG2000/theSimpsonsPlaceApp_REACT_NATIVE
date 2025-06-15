@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TextInput, ActivityIndicator, Animated, Text, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import i18n from '../..//i18n/i18n';
+import i18n from '../../i18n/i18n';
 
 import EpisodeItem from './EpisodeItem';
 import { Episode } from '../../domain/model/Episode';
@@ -14,7 +14,6 @@ import Icon from '@react-native-vector-icons/ionicons';
 
 interface EpisodeListSearchProps {
     readonly navigation: any;
-    readonly searchFilter?: string;
 }
 
 interface EpisodeListSearchState {
@@ -113,7 +112,7 @@ export default class EpisodeListSearch extends React.Component<EpisodeListSearch
                                 onPress={this.handleClearSearch}
                                 style={styles.clearButton}
                             >
-                                <Icon name="close" size={20} color="#999" /> {/* Icono de círculo con X */}
+                                <Icon name="close" size={20} color="#999" />
                             </TouchableOpacity>
                         )}
                     </View>

@@ -4,6 +4,9 @@ import { CalendarTabBarIcon, GameTabBarIcon, HeartTabBarIcon } from '../componen
 import { Stack, Tab } from '../../../App';
 import { headerBack } from '../components/HeaderBackIcon';
 import QuoteList from './QuoteList';
+import QuoteListSearch from './QuoteItemSearch';
+import StartGame from './game/StartGame';
+import QuestionGame from './game/QuestionGame';
 
 function AllQuoteStack({ rootNavigation }: { rootNavigation: any }) {
     return (
@@ -29,7 +32,7 @@ function FilterQuoteStack({ rootNavigation }: { rootNavigation: any }) {
     return (
         <Stack.Navigator initialRouteName="QuoteList">
             <Stack.Screen name="QuoteList"
-                            component={QuoteList as any}
+                            component={QuoteListSearch as any}
                             options={{
                             headerTintColor: '#FFC107',
                             headerBackTitle: 'Atrás',
@@ -49,7 +52,7 @@ function GameQuoteStack({ rootNavigation }: { rootNavigation: any }) {
     return (
         <Stack.Navigator initialRouteName="QuoteList">
             <Stack.Screen name="QuoteList"
-                            component={QuoteList as any}
+                            component={StartGame as any}
                             options={{
                             headerTintColor: '#FFC107',
                             headerBackTitle: 'Atrás',
@@ -59,8 +62,7 @@ function GameQuoteStack({ rootNavigation }: { rootNavigation: any }) {
                             headerLeft: headerBack(rootNavigation),
                             }}
             />
-            {/* <Stack.Screen name="EpisodeDetails"
-                            component={EpisodeDetails as any} /> */}
+            <Stack.Screen name="QuestionGame" component={QuestionGame} />
         </Stack.Navigator>
     );
 }
