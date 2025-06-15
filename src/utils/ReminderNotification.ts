@@ -8,7 +8,7 @@ export async function scheduleReminderNotification(
     delayInSeconds: number
 ) {
     try {
-        console.log('Notificacion programada:');
+        console.log('Notificacion programada');
         const result = await ReminderNotificationManager.scheduleNotification(
             title,
             body,
