@@ -36,7 +36,6 @@ export default class EpisodeDetails extends React.Component<EpisodeDetailsProps,
 
     private posterOpacity: Animated.Value = new Animated.Value(0); // Valor animado para la opacidad del poster
     private posterScale: Animated.Value = new Animated.Value(0.8); // Valor animado para la escala del poster
-    private scrollY: Animated.Value = new Animated.Value(0); // Valor animado para el desplazamiento del scroll
 
     // Contexto para la base de datos, ¡se debe tipar correctamente!
     // Para componentes de clase, se usa `static contextType = AppDatabase;`
