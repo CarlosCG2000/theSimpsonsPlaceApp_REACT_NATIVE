@@ -1,3 +1,4 @@
+/* eslint-disable react-native/no-inline-styles */
 import React from 'react';
 import { Logger } from '../../../utils/Logger';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -84,7 +85,7 @@ export default class ResultGame extends React.Component<ResultGameProps, ResultG
                 {/* Gráfica de la puntuación actual */}
                 <View style={styles.barChart}>
                     <Text style={styles.barLabel}>Aciertos {puntuacion}</Text>
-                    <View style={[styles.bar, { width: `${(puntuacion / 5) * 100}%`, backgroundColor: '#4CAF50' }]} />
+                    <View style={[styles.bar, styles.barSuccess, { width: `${(puntuacion / 5) * 100}%` }]} />
                     <Text style={styles.barLabel}>Fallos {5 - puntuacion}</Text>
                     <View style={[styles.bar, { width: `${((5 - puntuacion) / 5) * 100}%`, backgroundColor: '#F44336' }]} />
                 </View>
@@ -92,10 +93,10 @@ export default class ResultGame extends React.Component<ResultGameProps, ResultG
                 {/* Gráfica de barras para el historial de puntuaciones */}
                 <ScrollView style={styles.chart}>
                     <Text style={styles.title}>Historial de puntuaciones</Text>
-                    {this.state.historialPuntuacion.map((puntuacion, index) => (
-                        <View key={index} style={{ marginBottom: 8 }}>
-                            <Text style={styles.barLabel}>Juego {index + 1}: {puntuacion} / 5</Text>
-                            <View style={[styles.bar, { width: `${(puntuacion / 5) * 100}%`, backgroundColor: '#2196F3' }]} />
+                    {this.state.historialPuntuacion.map((punt, index) => (
+                        <View key={index} style={styles.historialItem}>
+                            <Text style={styles.barLabel}>Juego {index + 1}: {punt} / 5</Text>
+                            <View style={[styles.bar, { width: `${(punt / 5) * 100}%`, backgroundColor: '#2196F3' }]} />
                         </View>
                     ))}
                 </ScrollView>
@@ -146,5 +147,11 @@ const styles = StyleSheet.create({
         height: 20,
         borderRadius: 4,
         marginBottom: 10,
+    },
+    barSuccess: {
+        backgroundColor: '#4CAF50',
+    },
+    historialItem: {
+        marginBottom: 8,
     },
 });
