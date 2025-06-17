@@ -7,7 +7,7 @@ const logger = new Logger('EpisodeListView');
 
 // Extensión de EpisodeList para mostrar una lista de EpisodeListView
 export default class EpisodeListView extends EpisodeList {
-    private focusListener?: () => void; // 🔹 Aquí defines la propiedad
+    private focusListener?: () => void; // Aquí defines la propiedad
 
     public constructor(props: EpisodeListProps) {
         super(props);
@@ -16,7 +16,6 @@ export default class EpisodeListView extends EpisodeList {
     async componentDidMount() {
         await super.componentDidMount();
 
-        // 🔄 Escuchar el evento 'focus' de navegación
         this.focusListener = this.props.navigation.addListener('focus', () => {
             logger.debug('🔄 Reentrando a EpisodeListView. Refrescando lista de episodios vistos...');
             this.loadEpisodes();
@@ -24,7 +23,6 @@ export default class EpisodeListView extends EpisodeList {
     }
 
     componentWillUnmount() {
-        // ❌ Limpieza del listener cuando se destruye el componente
         if (this.focusListener) {
             this.focusListener(); // Esto ejecuta la función devuelta por addListener para desuscribirse
         }

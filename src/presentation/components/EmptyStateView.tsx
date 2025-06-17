@@ -2,9 +2,9 @@ import { View, Text, StyleSheet } from 'react-native';
 import { ToggleIcon } from './Icons';
 
 type Props = {
-  title: string;
-  description: string;
-  iconName?: string; // MaterialCommunityIcons
+    title: string;
+    description: string;
+    iconName?: string; // MaterialCommunityIcons
 };
 
 export default function EmptyStateView({ title, description }: Props) {
@@ -23,9 +23,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         paddingHorizontal: 24,
         flex: 1,
-    },
-    icon: {
-        marginBottom: 16,
     },
     title: {
         fontSize: 20,

@@ -2,12 +2,13 @@ import React from 'react';
 
 import { CalendarTabBarIcon, GameTabBarIcon, HeartTabBarIcon } from '../components/Icons';
 import { Stack, Tab } from '../../../App';
-import { headerBack } from '../components/HeaderBackIcon';
+import { HeaderBackButton } from '../components/HeaderBackButton';
 import QuoteList from './QuoteList';
 import QuoteListSearch from './QuoteItemSearch';
 import StartGame from './game/StartGame';
 import QuestionGame from './game/QuestionGame';
 import ResultGame from './game/ResultGame';
+import i18n from '../../i18n/i18n';
 
 function AllQuoteStack({ rootNavigation }: { rootNavigation: any }) {
     return (
@@ -16,11 +17,11 @@ function AllQuoteStack({ rootNavigation }: { rootNavigation: any }) {
                             component={QuoteList as any}
                             options={{
                                 headerTintColor: '#FFC107',
-                                headerBackTitle: 'Atrás',
-                                headerTitle: '10 citas aleatorias',
+                                headerBackTitle: i18n('back'),
+                                headerTitle: i18n('tenQuotes'),
                                 headerStyle: { backgroundColor: '#09184D' },
                                 headerTitleStyle: { fontWeight: 'bold' },
-                                headerLeft: headerBack(rootNavigation),
+                                headerLeft: HeaderBackButton(rootNavigation),
                             }}
             />
             {/* <Stack.Screen name="EpisodeDetails"
@@ -36,11 +37,11 @@ function FilterQuoteStack({ rootNavigation }: { rootNavigation: any }) {
                             component={QuoteListSearch as any}
                             options={{
                             headerTintColor: '#FFC107',
-                            headerBackTitle: 'Atrás',
-                            headerTitle: 'Filtrado de citas',
+                            headerBackTitle: i18n('back'),
+                            headerTitle: i18n('filterQuotes'),
                             headerStyle: { backgroundColor: '#09184D' },
                             headerTitleStyle: { fontWeight: 'bold' },
-                            headerLeft: headerBack(rootNavigation),
+                            headerLeft: HeaderBackButton(rootNavigation),
                             }}
                 />
                 {/* <Stack.Screen name="EpisodeDetails"
@@ -56,11 +57,11 @@ function GameQuoteStack({ rootNavigation }: { rootNavigation: any }) {
                             component={StartGame as any}
                             options={{
                             headerTintColor: '#FFC107',
-                            headerBackTitle: 'Atrás',
-                            headerTitle: 'Juego de citas',
+                            headerBackTitle: i18n('back'),
+                            headerTitle: i18n('gameQuotes'),
                             headerStyle: { backgroundColor: '#09184D' },
                             headerTitleStyle: { fontWeight: 'bold' },
-                            headerLeft: headerBack(rootNavigation),
+                            headerLeft: HeaderBackButton(rootNavigation),
                             }}
             />
             <Stack.Screen name="QuestionGame" component={QuestionGame as any} />
@@ -82,7 +83,7 @@ export function QuoteTabs({ navigation }: { navigation: any }) {
             >
                 <Tab.Screen name="AllQuoteStack"
                             options={{
-                                title: 'Listado completo',
+                                title: i18n('tenQuotes'),
                                 headerShown: false,
                                 tabBarIcon: HeartTabBarIcon,
                             }}>
@@ -91,7 +92,7 @@ export function QuoteTabs({ navigation }: { navigation: any }) {
 
                 <Tab.Screen name="FilterQuoteStack"
                             options={{
-                                title: 'Listado con filtros',
+                                title: i18n('filterQuotes'),
                                 headerShown: false,
                                 tabBarIcon: CalendarTabBarIcon,
                             }} >
@@ -100,7 +101,7 @@ export function QuoteTabs({ navigation }: { navigation: any }) {
 
                 <Tab.Screen name="GameQuoteStack"
                             options={{
-                                title: 'Juego de citas',
+                                title: i18n('gameQuotes'),
                                 headerShown: false,
                                 tabBarIcon: GameTabBarIcon,
                             }} >

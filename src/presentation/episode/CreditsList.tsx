@@ -1,13 +1,14 @@
 
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import Ionicons from '@react-native-vector-icons/ionicons';
+import i18n from '../../i18n/i18n';
 
 // Este componente crea las tarjetas estilizadas para directores, escritores, etc.
 interface CreditsListProps {
-  title: string;
-  items: string[];
-  iconName: any;
-  animation: Animated.Value | Animated.AnimatedInterpolation<string | number>;
+    title: string;
+    items: string[];
+    iconName: any;
+    animation: Animated.Value | Animated.AnimatedInterpolation<string | number>;
 }
 
 // --- Componente Reutilizable para las Listas de Créditos ---
@@ -16,115 +17,36 @@ export const CreditsList: React.FC<CreditsListProps> = ({ title, items, iconName
         return (
         <Animated.View style={[styles.creditsCard, { transform: [{ translateY: animation }] }]}>
             <View style={styles.creditsHeader}>
-            <Ionicons name={iconName} size={20} color="#FFC107" />
-            <Text style={styles.creditsTitle}>{title}</Text>
+                <Ionicons name={iconName} size={20} color="#FFC107" />
+                <Text style={styles.creditsTitle}>{title}</Text>
             </View>
-            <Text style={styles.creditsItemText}>No disponible</Text>
+            <Text style={styles.creditsItemText}>{ i18n('notAvailable') }</Text>
         </Animated.View>
         );
     }
 
     return (
         <Animated.View style={[styles.creditsCard, { transform: [{ translateY: animation }] }]}>
-        <View style={styles.creditsHeader}>
-            <Ionicons name={iconName} size={20} color="#FFC107" />
-            <Text style={styles.creditsTitle}>{title}</Text>
-        </View>
-        <View style={styles.creditsItemsContainer}>
-            {items.map((item, index) => (
-            <Text key={index} style={styles.creditsItemText}>
-                {/* Añade un punto separador excepto para el último elemento */}
-                {item}{index < items.length - 1 ? '  •  ' : ''}
-            </Text>
-            ))}
-        </View>
+            <View style={styles.creditsHeader}>
+                <Ionicons name={iconName} size={20} color="#FFC107" />
+                <Text style={styles.creditsTitle}>{title}</Text>
+            </View>
+            <View style={styles.creditsItemsContainer}>
+                {items.map((item, index) => (
+                    <Text key={index} style={styles.creditsItemText}>
+                        {item}{index < items.length - 1 ? '  •  ' : ''}
+                    </Text>
+                ))}
+            </View>
         </Animated.View>
     );
 };
 
 
-// --- ESTILOS ---
+// Estilos para las tarjetas de créditos
 const styles = StyleSheet.create({
-    scrollView: {
-        flex: 1,
-        backgroundColor: '#0d1117', // Un azul muy oscuro, casi negro
-    },
-    container: {
-        paddingBottom: 40,
-        paddingHorizontal: 20,
-    },
-    // Estilos de Carga y Error
-    loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#0d1117',
-    },
-    loadingText: {
-        marginTop: 15,
-        fontSize: 16,
-        color: '#c9d1d9',
-        fontFamily: 'System',
-    },
-    errorContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#0d1117',
-        padding: 20,
-    },
-    errorText: {
-        marginTop: 15,
-        fontSize: 18,
-        color: '#FF7575',
-        textAlign: 'center',
-        fontFamily: 'System',
-    },
-    // Estilos de la cabecera
-    headerContainer: {
-        paddingTop: 20,
-        paddingBottom: 20,
-        alignItems: 'center',
-        borderBottomWidth: 1,
-        borderBottomColor: '#30363d',
-    },
-    titleText: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#c9d1d9',
-        textAlign: 'center',
-        marginBottom: 12,
-        fontFamily: 'System',
-    },
-    overviewText: {
-        fontSize: 16,
-        color: '#8b949e',
-        textAlign: 'center',
-        lineHeight: 24,
-        marginBottom: 16,
-        fontFamily: 'System',
-    },
-    releaseDateText: {
-        fontSize: 14,
-        color: '#8b949e',
-        fontStyle: 'italic',
-        fontFamily: 'System',
-    },
-    // Estilos de la sección de acciones
-    actionsContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingVertical: 20,
-    },
-    actionLabel: {
-        fontSize: 16,
-        color: 'black',
-        fontWeight: '600',
-    },
-    // Estilos para las tarjetas de créditos
     creditsCard: {
-        backgroundColor: '#4E5D9C', // Azul oscuro, más claro que el fondo
+        backgroundColor: '#4E5D9C',
         borderRadius: 12,
         padding: 20,
         marginBottom: 16,
@@ -144,17 +66,17 @@ const styles = StyleSheet.create({
     creditsTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#FFC107', // Color acentuado para los títulos
+        color: '#FFC107',
         marginLeft: 10,
         fontFamily: 'System',
     },
     creditsItemsContainer: {
         flexDirection: 'row',
-        flexWrap: 'wrap', // Permite que los nombres pasen a la siguiente línea si no caben
+        flexWrap: 'wrap',
     },
     creditsItemText: {
         fontSize: 16,
-        color: 'rgba(255, 255, 255, 0.7)', // blanco con opacidad
+        color: 'rgba(255, 255, 255, 0.7)',
         lineHeight: 22,
         fontFamily: 'System',
     },

@@ -10,6 +10,6 @@ function HeaderBack({ rootNavigation }: { rootNavigation: any }) {
     );
 }
 
-export function headerBack(rootNavigation: any) {
+export function HeaderBackButton(rootNavigation: any) {
     return () => <HeaderBack rootNavigation={rootNavigation} />;
 }

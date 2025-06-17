@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { View, Text, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
+import i18n from '../../../i18n/i18n';
 
 export interface StartGameProps {
     readonly navigation: any
@@ -20,16 +21,14 @@ export default class StartGame extends React.Component<StartGameProps, StartGame
                 imageStyle={styles.imageOpacity}
             >
                 <View style={styles.overlay}>
-                    <Text style={styles.title}>Juego de citas</Text>
-                    <Text style={styles.subtitle}>
-                        El juego consiste en adivinar a qué personaje pertenece cada cita (en total 5 citas)
-                    </Text>
+                    <Text style={styles.title}>{i18n('quoteGame')}</Text>
+                    <Text style={styles.subtitle}>{i18n('descriptionQuoteGame')}</Text>
 
                     <TouchableOpacity
                         style={styles.button}
                         onPress={() => { this.props.navigation.navigate('QuestionGame');}}
                     >
-                        <Text style={styles.buttonText}>Comenzar juego</Text>
+                        <Text style={styles.buttonText}>{i18n('startGame')}</Text>
                     </TouchableOpacity>
                 </View>
             </ImageBackground>

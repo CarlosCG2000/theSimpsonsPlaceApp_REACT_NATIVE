@@ -13,27 +13,24 @@ interface QuoteListState {
     readonly quotes: Quote[];
     readonly loading: boolean;
     readonly search: string,
-    selectedCount: number // valor por defecto
+    selectedCount: number
 }
 
 const logger = new Logger('QuoteList');
 
 export default class QuoteListSearch extends React.Component<QuoteListProps, QuoteListState> {
     private quoteRepository: QuoteRepository;
-    private searchTimeout: NodeJS.Timeout | null = null; // "debounce" la búsqueda
+    private searchTimeout: NodeJS.Timeout | null = null;
 
-    // 1. Constructor para inicializar el estado y el datasource
     constructor(props: QuoteListProps) {
         super(props);
 
-        // Inicializamos el estado del componente
         this.state = { quotes: [], loading: true, search: '', selectedCount: 3 };
 
-        this.quoteRepository = new QuoteRepository(); // Creamos una instancia del datasource para obtener las citas
+        this.quoteRepository = new QuoteRepository();
     }
 
-    // 2. Método para cargar las citas al montar el componente (solo se ejecuta una vez)
-    async componentDidMount() { await this.loadQuote(); }
+    async componentDidMount() { await this.loadQuote(this.state.selectedCount, this.state.search); }
 
     componentWillUnmount() {
         if (this.searchTimeout) { clearTimeout(this.searchTimeout); }
@@ -42,11 +39,11 @@ export default class QuoteListSearch extends React.Component<QuoteListProps, Quo
     handleFilterChange = (value: any) => {
         this.setState({ search: value });
 
-        if (this.searchTimeout) { clearTimeout(this.searchTimeout); } // Limpiamos el timeout anterior si existe
-        this.searchTimeout = setTimeout(() => this.loadQuote(this.state.selectedCount, value), 300); // Espera 300ms antes de buscar
+        if (this.searchTimeout) { clearTimeout(this.searchTimeout); }
+        this.searchTimeout = setTimeout(() => this.loadQuote(this.state.selectedCount, value), 300);
     };
 
-    handleClearSearch = () => this.handleFilterChange(''); // Establece el filtro de búsqueda a una cadena vacía
+    handleClearSearch = () => this.handleFilterChange('');
 
     handleCountChange = (count: number) => {
         this.setState({ selectedCount: count });
@@ -101,7 +98,7 @@ export default class QuoteListSearch extends React.Component<QuoteListProps, Quo
                                     this.state.selectedCount === count && styles.segmentTextActive,
                                 ]}
                             >
-                                Elementos {count}
+                                { i18n('element') } {count}
                             </Text>
                         </TouchableOpacity>
                     ))}

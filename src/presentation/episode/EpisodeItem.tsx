@@ -1,12 +1,13 @@
 import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, TouchableHighlight, View } from 'react-native';
 import { Episode } from '../../domain/model/Episode';
+import i18n from '../../i18n/i18n';
 
 // Importamos el tipo Episode, que es la entidad que vamos a mostrar
 interface EpisodeRowProps {
-    readonly episode: Episode; // Propiedad que contiene el episodio a mostra
-    readonly index: number; // Índice del episodio
-    readonly onPress: () => void; // Función que se ejecuta al presionar el elemento
+    readonly episode: Episode;      // Propiedad que contiene el episodio a mostra
+    readonly index: number;         // Índice del episodio
+    readonly onPress: () => void;   // Función que se ejecuta al presionar el elemento
 }
 
 export default function EpisodeItem(props: EpisodeRowProps) { // en forma de función
@@ -19,12 +20,12 @@ export default function EpisodeItem(props: EpisodeRowProps) { // en forma de fun
         // Efecto para animar la opacidad
         Animated.timing(opacity, {
         // Crea una animación de temporización
-        toValue: 1, // Cambia el valor de opacidad a 1
-        duration: 1000, // Duración de la animación en milisegundos (JUGAR CON ESTO PARA VER EL RETRASO)
-        delay: index * 250, // Retraso en la animación basado en el índice
-        useNativeDriver: true, // Utiliza el driver nativo para mejorar el rendimiento
+        toValue: 1,             // Cambia el valor de opacidad a 1
+        duration: 1000,         // Duración de la animación en milisegundos (JUGAR CON ESTO PARA VER EL RETRASO)
+        delay: index * 250,     // Retraso en la animación basado en el índice
+        useNativeDriver: true,  // Utiliza el driver nativo para mejorar el rendimiento
         }).start();
-    }, [opacity, index]); // Se ejecuta cuando la opacidad o el índice cambian
+    }, [opacity, index]);       // Se ejecuta cuando la opacidad o el índice cambian
 
     return (
             <Animated.View style={[styles.container_item, { opacity }]}>
@@ -32,8 +33,8 @@ export default function EpisodeItem(props: EpisodeRowProps) { // en forma de fun
                     <View style={styles.container_info}>
                             <Text style={styles.title}> {episode.titulo}</Text>
                         <View style={styles.rowBetween}>
-                            <Text style={styles.overview}>Capitulo {episode.episodio}</Text>
-                            <Text style={styles.overview}>Temporada {episode.temporada}</Text>
+                            <Text style={styles.overview}>{ i18n('episode') } {episode.episodio}</Text>
+                            <Text style={styles.overview}>{ i18n('season') }  {episode.temporada}</Text>
                         </View>
                         <Text numberOfLines={1} style={styles.description}>{episode.descripcion}</Text>
                     </View>
@@ -50,7 +51,6 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     container_item: {
-        // height: 125, // o el valor real que uses
         flexDirection: 'row',
         gap: 10, // Espacio entre los elementos
         alignItems: 'center', // Alineamos los items al inicio
@@ -65,13 +65,6 @@ const styles = StyleSheet.create({
         flex: 1, // Ocupa el espacio restante importante para que el texto no se corte
         justifyContent: 'center', // Centra verticalmente el contenido
         gap: 2, // Espacio entre los elementos de texto
-        //________ PARA HACER PRUEBAS DE ESTILO _______
-        // borderColor: 'red', // Color del borde del título
-        // borderWidth: 1, // Ancho del borde del título
-    },
-    image: {
-        width: 80,
-        height: 100,
     },
     title: {
         fontSize: 18,

@@ -2,7 +2,7 @@
 import React from 'react';
 
 import { CalendarTabBarIcon, EyeTabBarIcon, HeartTabBarIcon } from '../components/Icons';
-import { headerBack } from '../components/HeaderBackIcon';
+import { HeaderBackButton } from '../components/HeaderBackButton';
 import { Stack, Tab } from '../../../App';
 import EpisodeDetails from './EpisodeDetails';
 import i18n from '../../i18n/i18n';
@@ -19,12 +19,12 @@ function AllEpisodeStack({ rootNavigation }: { rootNavigation: any }) {
                             options={{
                                 // headerShown: false title: 'Listado de episodios completo',
                                 headerTintColor: '#FFC107',                     // Color del icono hacia atrás
-                                headerBackTitle: 'Atrás',                       // Texto del botón de retroceso
+                                headerBackTitle: i18n('back'),                       // Texto del botón de retroceso
                                 headerTitle: i18n('allEpisodes'),               // Título del header
                                 // headerTitleAlign: 'center',                  // Alineación del título
                                 headerStyle: { backgroundColor: '#09184D' },    // Color de fondo del header
                                 headerTitleStyle: { fontWeight: 'bold' },
-                                headerLeft: headerBack(rootNavigation),
+                                headerLeft: HeaderBackButton(rootNavigation),
                             }}
             />
             <Stack.Screen   name="EpisodeDetails"
@@ -40,11 +40,11 @@ function FilterEpisodeStack({ rootNavigation }: { rootNavigation: any }) {
                             component={EpisodeListSearch as any}
                             options={{
                             headerTintColor: '#FFC107',
-                            headerBackTitle: 'Atrás',
+                            headerBackTitle: i18n('back'),
                             headerTitle: i18n('filterEpisodes'),
                             headerStyle: { backgroundColor: '#09184D' },
                             headerTitleStyle: { fontWeight: 'bold' },
-                            headerLeft: headerBack(rootNavigation),
+                            headerLeft: HeaderBackButton(rootNavigation),
                             }}
                 />
                 <Stack.Screen   name="EpisodeDetails"
@@ -60,11 +60,11 @@ function ViewEpisodeStack({ rootNavigation }: { rootNavigation: any }) {
                             component={EpisodeListView as any}
                             options={{
                             headerTintColor: '#FFC107',
-                            headerBackTitle: 'Atrás',
+                            headerBackTitle: i18n('back'),
                             headerTitle: i18n('viewEpisodes'),
                             headerStyle: { backgroundColor: '#09184D' },
                             headerTitleStyle: { fontWeight: 'bold' },
-                            headerLeft: headerBack(rootNavigation),
+                            headerLeft: HeaderBackButton(rootNavigation),
                             }}
             />
             <Stack.Screen   name="EpisodeDetails"

@@ -20,7 +20,7 @@ interface EpisodeListSearchState {
     readonly episodes: ReadonlyArray<Episode>;
     readonly loading: boolean;
     readonly episodeFilter: EpisodeFilter
-    showSeasonPicker: boolean; // <-- Para controlar la visibilidad del Picker
+    showSeasonPicker: boolean; // Para controlar la visibilidad del Picker
 }
 
 const logger = new Logger('EpisodeListSearch');
@@ -122,11 +122,11 @@ export default class EpisodeListSearch extends React.Component<EpisodeListSearch
                         onPress={() => this.setState(prevState => ({ showSeasonPicker: !prevState.showSeasonPicker }))}
                     >
                         <Text style={styles.pickerToggleText}>
-                            {season ? `Temporada ${season}` : 'Todas las temporadas'}
+                            {season ? `${i18n('season')} ${season}` : `${i18n('allSeasons')}`}
                         </Text>
                     </TouchableOpacity>
 
-                    {showSeasonPicker && ( // Muestra el Picker solo si showSeasonPicker es true
+                    {showSeasonPicker && (          // Muestra el Picker solo si showSeasonPicker es true
                         <Picker
                             selectedValue={season}
                             style={styles.picker} // Puedes ajustar el estilo para que sea más compacto
@@ -135,10 +135,10 @@ export default class EpisodeListSearch extends React.Component<EpisodeListSearch
                                 this.setState({ showSeasonPicker: false }); // Oculta después de seleccionar
                             }}
                         >
-                            <Picker.Item label="Todas las temporadas" value={0} />
+                            <Picker.Item label={i18n('allSeasons')} value={0} />
 
                             {[...Array(25)].map((_, i) => (
-                                <Picker.Item key={i + 1} label={`Temporada ${i + 1}`} value={i + 1} />
+                                <Picker.Item key={i + 1} label={`${i18n('season')} ${i + 1}`} value={i + 1} />
                             ))}
 
                         </Picker>
@@ -236,15 +236,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#09184D',
     },
     searchInputContainer: {
-        flexDirection: 'row', // Para que el input y el botón estén en la misma fila
+        flexDirection: 'row',   // Para que el input y el botón estén en la misma fila
         alignItems: 'baseline', // Alinea verticalmente el input y el icono
-       // backgroundColor: '#4E5D9C',
         borderRadius: 5,
         marginBottom: 10,
-        paddingRight: 10, // Espacio para el icono
+        paddingRight: 10,       // Espacio para el icono
     },
     clearButton: {
-        padding: 5, // Aumenta el área de toque del icono
+        padding: 5,             // Aumenta el área de toque del icono
     },
     input: {
         backgroundColor: '#4E5D9C',
@@ -253,8 +252,8 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         color: 'black',
         fontSize: 18,
-        marginLeft: 30, // Espacio para el icono de limpiar
-        width: '87%', // Asegura que el input ocupe todo el ancho disponible
+        marginLeft: 30,     // Espacio para el icono de limpiar
+        width: '87%',       // Asegura que el input ocupe todo el ancho disponible
     },
     picker: {
         backgroundColor: '#4E5D9C',
@@ -267,18 +266,18 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         marginHorizontal: 30,
     },
-    pickerToggle: { // NUEVO ESTILO para el "botón" del Picker de temporada
+    pickerToggle: {
         backgroundColor: '#4E5D9C',
         paddingHorizontal: 10,
-        paddingVertical: 12, // Un poco más de padding para que parezca un botón
+        paddingVertical: 12,    // Un poco más de padding para que parezca un botón
         borderRadius: 5,
         marginBottom: 10,
         marginHorizontal: 30,
         justifyContent: 'center',
-        alignItems: 'center', // Alinea el texto a la izquierda
+        alignItems: 'center',   // Alinea el texto a la izquierda
     },
     pickerToggleText: {
-        color: 'black', // Color del texto
+        color: 'black',
         fontSize: 18,
     },
     datePicker: {

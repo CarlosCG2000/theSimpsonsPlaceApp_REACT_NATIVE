@@ -4,14 +4,13 @@ import { Quote } from '../../domain/model/Quote';
 import { QuoteRepository } from '../../domain/repository/QuoteRepository';
 import { Logger } from '../../utils/Logger';
 import QuoteItem from './QuoteItem';
+import i18n from '../../i18n/i18n';
 
-// Propiedades del componente QuoteList, de momento no necesitamos pasarle nada
 interface QuoteListProps { }
 
-// Estado del componente QuoteList, que contiene un array de citas y un estado de carga
 interface QuoteListState {
-  readonly quotes: Quote[]; // Array de citas
-  readonly loading: boolean; // Loading de carga de citas
+  readonly quotes: Quote[];
+  readonly loading: boolean;
 }
 
 const logger = new Logger('QuoteList');
@@ -19,19 +18,16 @@ const logger = new Logger('QuoteList');
 export default class QuoteList extends React.Component<QuoteListProps, QuoteListState> {
   private quoteRepository: QuoteRepository;
 
-    // 1. Constructor para inicializar el estado y el datasource
     constructor(props: QuoteListProps) {
         super(props);
 
-        // Inicializamos el estado del componente
         this.state = { quotes: [],
             loading: true,
         };
 
-        this.quoteRepository = new QuoteRepository(); // Creamos una instancia del datasource para obtener las citas
+        this.quoteRepository = new QuoteRepository();
     }
 
-    // 2. Método para cargar las citas al montar el componente (solo se ejecuta una vez)
     async componentDidMount() {
       await this.loadQuote();
     }
@@ -39,7 +35,6 @@ export default class QuoteList extends React.Component<QuoteListProps, QuoteList
     render() {
       const { loading } = this.state;
 
-      // Si estamos cargando, mostramos un indicador de carga
       if (loading) {
           return (
               <View style={styles.containerLoading}>
@@ -48,22 +43,22 @@ export default class QuoteList extends React.Component<QuoteListProps, QuoteList
           );
       }
 
-      return (  // boton para generar un nuevo conjunto de citas
+      return (
           <View style={styles.container}>
 
               <TouchableOpacity
-                  style={styles.buttonQuotes} // Aplicar estilos adicionales para diferenciar
+                  style={styles.buttonQuotes}
                   onPress={this.onSubmit}
               >
-                  <Text style={styles.buttonText}>Generar New Quotes</Text>
+                  <Text style={styles.buttonText}> {i18n('btQuotes')}</Text>
               </TouchableOpacity>
 
               {this.state.loading ? (
-              <Text>Loading...</Text>
+              <Text>{i18n('loading')}</Text>
               ) : (
                 <Animated.FlatList
-                      data={ this.state.quotes } // Usamos el estado para obtener la lista de episodios
-                      keyExtractor={( quote: Quote ) => quote.cita } // Usamos el id de la película como clave
+                      data={ this.state.quotes }
+                      keyExtractor={( quote: Quote ) => quote.cita }
                       renderItem={ this.renderItem }
                   />
               )}
@@ -75,28 +70,25 @@ export default class QuoteList extends React.Component<QuoteListProps, QuoteList
         return (
             <QuoteItem
                 quote={item}
-                index={index} // Pasamos el índice del item para animaciones
+                index={index}
             />
         );
     };
 
-    // Método para cargar las citas desde el datasource
-    // protected abstract loadQuote(): Promise<Quote>; // Este método se implementa en la clase concreta
     async loadQuote() {
         try {
-            const quotes: Quote[]  = await this.quoteRepository.getQuotesTest(); //.getQuotes()
+            const quotes: Quote[]  = await this.quoteRepository.getQuotesTest();
             logger.info('Citas cargadas: ' + quotes.length);
-            this.setState({ quotes: quotes, loading: false }); // Actualizamos el estado con las citas cargadas y cambiamos el loading a false
+            this.setState({ quotes: quotes, loading: false });
         } catch (error) {
             logger.error('Error al cargar las citas:' + error);
         }
     }
 
-    // Método para generar un nuevo conjunto de citas
     private onSubmit = async () => {
         logger.info('Generando nuevo conjunto de citas');
-        this.setState({ loading: true, quotes: [] }); // Reiniciamos el estado a loading y sin episodios
-        await this.loadQuote(); // Volvemos a cargar nuevas citas aleatorias
+        this.setState({ loading: true, quotes: [] });
+        await this.loadQuote();
     };
 
 }
@@ -107,25 +99,12 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: '#09184D',
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 16,
-  },
   quoteItem: {
     padding: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
-  quoteTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  quoteDetails: {
-    fontSize: 14,
-    color: '#666',
-  },
-    containerLoading: {
+  containerLoading: {
       flex: 1,                    // Ocupa toda la pantalla
       justifyContent: 'center',   // Centrado vertical
       alignItems: 'center',       // Centrado horizontal

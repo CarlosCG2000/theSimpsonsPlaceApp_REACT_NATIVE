@@ -4,6 +4,7 @@ import { Logger } from '../../../utils/Logger';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { scheduleReminderNotification } from '../../../utils/ReminderNotification';
+import i18n from '../../../i18n/i18n';
 
 export interface ResultGameProps {
     readonly navigation: any
@@ -47,8 +48,8 @@ export default class ResultGame extends React.Component<ResultGameProps, ResultG
         await this.cargarHistorialPuntuacion();
 
         scheduleReminderNotification(
-            '¡Vuelve a jugar!',
-            'Homer extraña tus taps 🍩',
+            i18n('againGame'),
+            i18n('homerMissesYourTaps'),
             10 // 60 * 60 * 3 // en 3 horas
         );
     }
@@ -86,23 +87,23 @@ export default class ResultGame extends React.Component<ResultGameProps, ResultG
 
         return (
             <View style={styles.container}>
-                <Text style={styles.title}>¡Juego terminado!</Text>
-                <Text style={styles.message}>Resultado final: {puntuacion} / 5</Text>
+                <Text style={styles.title}>{i18n('finishGame')}</Text>
+                <Text style={styles.message}>{i18n('finishResult')} {puntuacion} / 5</Text>
 
                 {/* Gráfica de la puntuación actual */}
                 <View style={styles.barChart}>
-                    <Text style={styles.barLabel}>Aciertos {puntuacion}</Text>
+                    <Text style={styles.barLabel}>{i18n('scoreSucess')} {puntuacion}</Text>
                     <View style={[styles.bar, styles.barSuccess, { width: `${(puntuacion / 5) * 100}%` }]} />
-                    <Text style={styles.barLabel}>Fallos {5 - puntuacion}</Text>
+                    <Text style={styles.barLabel}>{i18n('scoreFail')} {5 - puntuacion}</Text>
                     <View style={[styles.bar, { width: `${((5 - puntuacion) / 5) * 100}%`, backgroundColor: '#F44336' }]} />
                 </View>
 
                 {/* Gráfica de barras para el historial de puntuaciones */}
                 <ScrollView style={styles.chart}>
-                    <Text style={styles.title}>Historial de puntuaciones</Text>
+                    <Text style={styles.title}>{i18n('scoreHistory')}</Text>
                     {this.state.historialPuntuacion.map((punt, index) => (
                         <View key={index} style={styles.historialItem}>
-                            <Text style={styles.barLabel}>Juego {index + 1}: {punt} / 5</Text>
+                            <Text style={styles.barLabel}>{i18n('game')} {index + 1}: {punt} / 5</Text>
                             <View style={[styles.bar, { width: `${(punt / 5) * 100}%`, backgroundColor: '#2196F3' }]} />
                         </View>
                     ))}
@@ -113,7 +114,7 @@ export default class ResultGame extends React.Component<ResultGameProps, ResultG
                     style={styles.button}
                     onPress={() => this.props.navigation.navigate('QuoteList')}
                 >
-                    <Text style={styles.buttonText}>Volver al inicio</Text>
+                    <Text style={styles.buttonText}>{i18n('backHome')}</Text>
                 </TouchableOpacity>
 
                         {/* NUEVO: Botón para reiniciar el historial */}
@@ -121,7 +122,7 @@ export default class ResultGame extends React.Component<ResultGameProps, ResultG
                     style={styles.button} // Aplicar estilos adicionales para diferenciar
                     onPress={this.reiniciarHistorialPuntuacion}
                 >
-                    <Text style={styles.buttonText}>Reiniciar Historial</Text>
+                    <Text style={styles.buttonText}>{i18n('resetHistory')}</Text>
                 </TouchableOpacity>
             </View>
         );

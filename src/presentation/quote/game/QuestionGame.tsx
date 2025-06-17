@@ -6,6 +6,7 @@ import { Question, quotesToQuestions } from '../../../domain/model/Question';
 import { Quote } from '../../../domain/model/Quote';
 import { Text, TouchableOpacity, View, StyleSheet, Modal, Image, ActivityIndicator } from 'react-native';
 import { Logger } from '../../../utils/Logger';
+import i18n from '../../../i18n/i18n';
 
 export interface QuestionGameProps {
     readonly navigation: any
@@ -17,8 +18,8 @@ interface QuestionGameState {
     score: number
     isAnswered: boolean
     isLoading: boolean
-    showModal: boolean // controla si se muestra el popup
-    isAnswerCorrect: boolean, // indica si la respuesta fue correcta
+    showModal: boolean
+    isAnswerCorrect: boolean,
 }
 
 const logger = new Logger('QuestionGame');
@@ -32,12 +33,12 @@ export default class QuestionGame extends React.Component<QuestionGameProps, Que
         super(props);
 
         this.state = {
-            currentIndex: 0, // Índice de la pregunta actual
-            selectedAnswer: null, // Respuesta seleccionada por el usuario
-            score: 0, // Puntuación del usuario
-            isAnswered: false, // Indica si la pregunta ha sido respondida
-            isLoading: true, // Indica si las preguntas están cargando
-            showModal: false, // Controla si se muestra el popup
+            currentIndex: 0,        // Índice de la pregunta actual
+            selectedAnswer: null,   // Respuesta seleccionada por el usuario
+            score: 0,               // Puntuación del usuario
+            isAnswered: false,      // Indica si la pregunta ha sido respondida
+            isLoading: true,        // Indica si las preguntas están cargando
+            showModal: false,       // Controla si se muestra el popup
             isAnswerCorrect: false, // Indica si la respuesta fue correcta
         };
 
@@ -71,8 +72,8 @@ export default class QuestionGame extends React.Component<QuestionGameProps, Que
     };
 
     handleNextQuestion = () => {
-        const { currentIndex, selectedAnswer } = this.state; // Obtener el índice actual, la respuesta seleccionada y la puntuación actual
-        const currentQuestion = this.questions[currentIndex]; // Obtener la pregunta actual
+        const { currentIndex, selectedAnswer } = this.state;    // Obtener el índice actual, la respuesta seleccionada y la puntuación actual
+        const currentQuestion = this.questions[currentIndex];   // Obtener la pregunta actual
 
         const isCorrect = selectedAnswer === currentQuestion.personajeCorrecto; // Verificar si la respuesta seleccionada es correcta
         logger.info(`Pregunta ${currentIndex + 1}: ${currentQuestion.cita}`);
@@ -156,7 +157,7 @@ export default class QuestionGame extends React.Component<QuestionGameProps, Que
                         style={styles.nextButton}
                     >
                         <Text style={styles.optionText}>
-                        {currentIndex === this.questions.length - 1 ? 'Ver resultado' : 'Siguiente'}
+                        {currentIndex === this.questions.length - 1 ? i18n('result') : i18n('next')}
                         </Text>
                     </TouchableOpacity>
                 )}
@@ -169,10 +170,10 @@ export default class QuestionGame extends React.Component<QuestionGameProps, Que
                     <View style={styles.modalBackground}>
                         <View style={styles.modalContent}>
                             <Text style={styles.modalTitle}>
-                                {this.state.isAnswerCorrect ? '¡Correcto! ✅' : 'Incorrecto ❌'}
+                                {this.state.isAnswerCorrect ? `${i18n('correct')} ✅` : `${i18n('incorrect')} ❌`}
                             </Text>
                             <Text style={styles.correctAnswerText}>
-                                {`La respuesta correcta era: ${currentQuestion.personajeCorrecto}`}
+                                {`${i18n('correctAnswer')} ${currentQuestion.personajeCorrecto}`}
                             </Text>
                             <Image
                                 source={{ uri: currentQuestion.imagen }}
@@ -181,7 +182,7 @@ export default class QuestionGame extends React.Component<QuestionGameProps, Que
                             />
                             <TouchableOpacity onPress={this.handleCloseModal} style={styles.nextButton}>
                                 <Text style={styles.optionText}>
-                                    {currentIndex === this.questions.length - 1 ? 'Ver resultado' : 'Siguiente'}
+                                    {currentIndex === this.questions.length - 1 ? i18n('result') : i18n('next')}
                                 </Text>
                             </TouchableOpacity>
                         </View>

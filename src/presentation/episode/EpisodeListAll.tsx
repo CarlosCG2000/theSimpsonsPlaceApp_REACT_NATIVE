@@ -7,7 +7,7 @@ const logger = new Logger('EpisodeListAll');
 // Extensión de EpisodeList para mostrar una lista de EpisodeListAll
 export default class EpisodeListAll extends EpisodeList {
 
-    public constructor(props: EpisodeListProps) { // Constructor que recibe las propiedades del componente, las mismas que se pasan a la clase base EpisodeList
+    public constructor(props: EpisodeListProps) {
         super(props);
     }
 
