@@ -46,7 +46,7 @@ export class EpisodeSQLiteDatasource {
     }
 
     async addViewedEpisode(episode: Episode): Promise<void> {
-        logger.info(`💾 SQLite: Añadiendo episodio visualizado: ${episode.id}`);
+        logger.info(`SQLite: Añadiendo episodio visualizado: ${episode.id}`);
         const values = this.mapDtoToDbValues(episode);
         // Usar INSERT OR REPLACE para actualizar si ya existe (útil si el usuario vuelve a "ver" un episodio)
         const sql = `INSERT OR REPLACE INTO viewed_episodes (
