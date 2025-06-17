@@ -16,7 +16,6 @@
 
         <receiver android:name=".ReminderReceiver" />
 
-
       <activity
         android:name=".MainActivity"
         android:label="@string/app_name"
