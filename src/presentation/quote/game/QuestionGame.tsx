@@ -2,11 +2,12 @@
 
 import React from 'react';
 import { QuoteRepository } from '../../../domain/repository/QuoteRepository';
-import { Question, quotesToQuestions } from '../../../domain/model/Question';
+import { Question } from '../../../domain/model/Question';
 import { Quote } from '../../../domain/model/Quote';
 import { Text, TouchableOpacity, View, StyleSheet, Modal, Image, ActivityIndicator } from 'react-native';
 import { Logger } from '../../../utils/Logger';
 import i18n from '../../../i18n/i18n';
+import { quotesToQuestions } from '../../../domain/mapper/toQuestion';
 
 export interface QuestionGameProps {
     readonly navigation: any

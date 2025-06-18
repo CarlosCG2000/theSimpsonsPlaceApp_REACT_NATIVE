@@ -77,7 +77,7 @@ export default class QuoteList extends React.Component<QuoteListProps, QuoteList
 
     async loadQuote() {
         try {
-            const quotes: Quote[]  = await this.quoteRepository.getQuotesTest();
+            const quotes: Quote[]  = await this.quoteRepository.getQuotes(); // getQuotesTest()
             logger.info('Citas cargadas: ' + quotes.length);
             this.setState({ quotes: quotes, loading: false });
         } catch (error) {

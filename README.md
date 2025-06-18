@@ -1,3 +1,20 @@
+
+- Requisitos OBLIGATORIOS de la aplicación:
+1. Utilizar exactamente la versión 0.71 de React Native.
+2. Utilizar FlatList o SectionList
+3. Hacer llamadas a un backend usando fetch o cualquier otra librería.
+4. Almacenar algo en persistencia: caché o preferencias con AsyncStorage, o una base de datos con React Native SQLite 2.
+5. Introducir navegación de cualquier tipo (stack o tab bar) con React Navigation.
+6. Añadir animaciones imperativas o declarativas.
+7. Crear uno o más módulos nativos.
+8. Las funcionalidades introducidas deben funcionar en iOS y en Android.
+
+- Otros aspectos propuestos como OPTATIVOS (subirán nota)
+Crear una o más vistas nativas.
+1. Añadir soporte para al menos otro idioma.
+2. Desarrollar la app enteramente en TypeScript.
+3. NOTA Importante: El proyecto debe ser lo suficientemente distinto de la app de ejemplo desarrollada en clase
+
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
 # Getting Started
