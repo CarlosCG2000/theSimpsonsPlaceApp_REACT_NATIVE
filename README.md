@@ -1,6 +1,6 @@
 
 - Requisitos OBLIGATORIOS de la aplicación:
-1. Utilizar exactamente la versión 0.71 de React Native. ✅
+1. Utilizar exactamente la versión 0.78 de React Native. ✅
 2. Utilizar FlatList o SectionList ✅
 3. Hacer llamadas a un backend usando fetch o cualquier otra librería. ✅
 4. Almacenar algo en persistencia: caché o preferencias con AsyncStorage, o una base de datos con React Native SQLite 2. ✅
